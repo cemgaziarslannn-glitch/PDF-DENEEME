@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGA - Eğitim Yönetim Merkezi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin:0; font-family:'Montserrat', sans-serif; background: #0f0f0f; color:#fff; padding:20px; }
+        .admin-card { max-width: 600px; margin: 40px auto; background: #1a1a1a; padding: 30px; border-radius: 20px; border: 1px solid #333; box-shadow: 0 15px 35px rgba(0,0,0,0.7); }
+        h2 { text-align: center; color: #f1c40f; text-transform: uppercase; letter-spacing: 2px; }
+        
+        label { display: block; margin-top: 15px; font-size: 13px; color: #888; }
+        input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border-radius: 10px; border: 1px solid #333; background: #222; color: #fff; box-sizing: border-box; }
+        
+        button#saveEduBtn { width: 100%; padding: 15px; margin-top: 25px; border: none; border-radius: 12px; background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        button#saveEduBtn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4); }
+
+        .edu-list { margin-top: 40px; }
+        .edu-item { background: #252525; padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #f1c40f; }
+        .edu-info h4 { margin: 0; color: #eee; }
+        .edu-info span { font-size: 11px; color: #666; }
+        .delete-btn { background: #c0392b; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="admin-card">
+    <h2>🎓 Eğitim Yükleme Merkezi</h2>
+    
+    <label>Eğitim Başlığı</label>
+    <input type="text" id="eduTitle" placeholder="Örn: Yakın Savunma Teknikleri">
+    
+    <label>Eğitim Kategorisi</label>
+    <select id="eduCategory">
+        <option value="genel">Genel Eğitim</option>
+        <option value="prosedur">Saha Prosedürleri</option>
+        <option value="teknik">Teknik Donanım</option>
+        <option value="acil">Acil Durum Yönetimi</option>
+    </select>
+
+    <label>Eğitim Açıklaması</label>
+    <textarea id="eduDesc" rows="3" placeholder="Personelin bilmesi gereken kısa notlar..."></textarea>
+    
+    <label>İçerik Linki (YouTube, PDF veya Drive)</label>
+    <input type="text" id="eduUrl" placeholder="https://youtube.com/watch?v=...">
+    
+    <button id="saveEduBtn">Sisteme Yayınla 🚀</button>
+
+    <div class="edu-list">
+        <h3>Yayındaki Eğitimler</h3>
+        <div id="adminEduList"></div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+    // SENİN YENİ MERKEZ PROJE CONFIG BİLGİLERİN
+    const firebaseConfig = {
+        apiKey: "AIzaSyBWu01alJKdnEvhs_bumDCxgGO9m-BX5Y0",
+        authDomain: "merkezprojecga.firebaseapp.com",
+        databaseURL: "https://merkezprojecga-default-rtdb.firebaseio.com",
+        projectId: "merkezprojecga",
+        storageBucket: "merkezprojecga.firebasestorage.app",
+        messagingSenderId: "4183440370",
+        appId: "1:4183440370:web:c83e65bbc6c1724a3a896b",
+        measurementId: "G-YCSTH0NW94"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const saveBtn = document.getElementById("saveEduBtn");
+    const eduList = document.getElementById("adminEduList");
+
+    // EĞİTİM KAYDET
+    saveBtn.addEventListener("click", () => {
+        const title = document.getElementById("eduTitle").value;
+        const category = document.getElementById("eduCategory").value;
+        const desc = document.getElementById("eduDesc").value;
+        const url = document.getElementById("eduUrl").value;
+
+        if(!title || !url) return alert("Başlık ve Link girmelisin abi!");
+
+        push(ref(db, "educations"), {
+            title,
+            category,
+            desc,
+            url,
+            createdAt: serverTimestamp()
+        }).then(() => {
+            alert("Eğitim tüm personele gönderildi!");
+            document.getElementById("eduTitle").value = "";
+            document.getElementById("eduDesc").value = "";
+            document.getElementById("eduUrl").value = "";
+        });
+    });
+
+    // LİSTELE VE SİL
+    onValue(ref(db, "educations"), (snap) => {
+        eduList.innerHTML = "";
+        const data = snap.val();
+        if(data) {
+            Object.entries(data).reverse().forEach(([key, edu]) => {
+                const div = document.createElement("div");
+                div.className = "edu-item";
+                div.innerHTML = `
+                    <div class="edu-info">
+                        <h4>${edu.title}</h4>
+                        <span>${edu.category.toUpperCase()}</span>
+                    </div>
+                    <button class="delete-btn" onclick="window.deleteEdu('${key}')">Sil</button>
+                `;
+                eduList.appendChild(div);
+            });
+        }
+    });
+
+    window.deleteEdu = (key) => {
+        if(confirm("Bu eğitimi yayından kaldırmak istediğine emin misin?")) {
+            remove(ref(db, `educations/${key}`));
+        }
+    };
+</script>
+
+</body>
+</html>

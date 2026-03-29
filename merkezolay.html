@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KOLART | COMMAND CENTER v5.1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #050608;
+            --card: #12151a;
+            --danger: #ff453a;   /* Olay Rengi */
+            --warning: #ff9f0a;  /* Devriye Rengi */
+            --both: #bf5af2;     /* Çift İhlal (Mor) */
+            --text: #ffffff;
+            --border: rgba(255,255,255,0.08);
+            --accent: #eab308;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            padding: 20px; 
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 50%, #1a1f26 0%, #050608 100%);
+        }
+
+        /* ÜST PANEL */
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            padding: 20px; 
+            border-bottom: 1px solid var(--border);
+            background: rgba(18, 21, 26, 0.8);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .header h1 { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
+        .header h1 span { color: var(--accent); }
+        .header p { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 2px; margin-top: 5px; }
+
+        /* RADAR SÜTUNLARI */
+        .triage-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .column {
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 28px;
+            padding: 15px;
+            min-height: 80vh;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .column-header {
+            text-align: center;
+            padding: 20px 10px;
+            margin-bottom: 5px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.03);
+        }
+        .column-header i { font-size: 32px; margin-bottom: 12px; display: block; }
+        .column-header h3 { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* RENK TEMALARI */
+        .col-event { border-top: 8px solid var(--danger); }
+        .col-both { border-top: 8px solid var(--both); background: rgba(191, 90, 242, 0.02); }
+        .col-patrol { border-top: 8px solid var(--warning); }
+
+        /* SİTE KARTLARI */
+        .site-card {
+            background: var(--card);
+            border-radius: 22px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .site-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent); opacity: 0.5;
+        }
+
+        .site-card h2 { font-size: 19px; font-weight: 800; margin-bottom: 20px; text-align: center; color: #fff; letter-spacing: -0.5px; }
+
+        /* AKILLI BUTONLAR */
+        .action-group { display: flex; flex-direction: column; gap: 12px; }
+        .btn {
+            width: 100%;
+            height: 56px;
+            border-radius: 15px;
+            border: none;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-event { background: var(--danger); color: #fff; box-shadow: 0 4px 15px rgba(255, 69, 58, 0.3); }
+        .btn-patrol { background: var(--warning); color: #000; box-shadow: 0 4px 15px rgba(255, 159, 10, 0.3); }
+        
+        .btn:hover { filter: brightness(1.1); transform: translateY(-3px) scale(1.02); }
+        .btn:active { transform: scale(0.98); }
+
+        /* BOŞ DURUM */
+        .empty-state { 
+            text-align: center; padding: 60px 20px; color: var(--text); opacity: 0.15; 
+            font-size: 12px; font-weight: 700; border: 2px dashed rgba(255,255,255,0.1); border-radius: 20px;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* MOBİL UYUM */
+        @media (max-width: 1100px) {
+            .triage-grid { grid-template-columns: 1fr; }
+            .column { min-height: auto; margin-bottom: 20px; }
+            body { padding: 10px; }
+        }
+		/* GERİ BUTONU ÖZEL STİL */
+.btn-back {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+    z-index: 100;
+    text-transform: uppercase;
+}
+
+.btn-back:hover {
+    background: var(--accent);
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(234, 179, 8, 0.3);
+}
+
+/* Mobil cihazlarda butonun konumu */
+@media (max-width: 600px) {
+    .btn-back {
+        position: relative;
+        top: 0;
+        right: 0;
+        margin: 10px auto 20px auto;
+        width: fit-content;
+    }
+}
+    </style>
+</head>
+<body>
+
+<button class="btn-back" onclick="history.back()">    <i class="fas fa-arrow-left"></i> GERİ DÖN
+</button>
+
+<div class="header">
+    <h1>KOLART <span>OPERASYON RADARI</span></h1>
+    <p>Gerçek Zamanlı İhlal ve Olay Takip Merkezi</p>
+</div>
+
+<div class="triage-grid">
+    
+    <div class="column col-event">
+        <div class="column-header" style="color: var(--danger);">
+            <i class="fas fa-fire-extinguisher"></i>
+            <h3>SADECE OLAYLAR</h3>
+        </div>
+        <div id="eventOnly"></div>
+    </div>
+
+    <div class="column col-both">
+        <div class="column-header" style="color: var(--both);">
+            <i class="fas fa-biohazard"></i>
+            <h3>KRİTİK ÇİFT İHLAL</h3>
+        </div>
+        <div id="bothAlert"></div>
+    </div>
+
+    <div class="column col-patrol">
+        <div class="column-header" style="color: var(--warning);">
+            <i class="fas fa-person-walking-luggage"></i>
+            <h3>EKSİK DEVRİYELER</h3>
+        </div>
+        <div id="patrolOnly"></div>
+    </div>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+    // MERKEZ CONFIG (Kendi bilgilerinle doğrula)
+    const config = {
+        apiKey: "AIzaSyDCJWz80wWlzNhaM2Qnw_e5UkQoc8DoJaU",
+  authDomain: "merkez-14bf8.firebaseapp.com",
+  projectId: "merkez-14bf8",
+  storageBucket: "merkez-14bf8.firebasestorage.app",
+  messagingSenderId: "512943111807",
+  appId: "1:512943111807:web:675c769c7ede48216e494a",
+  measurementId: "G-BYS8FPKY7H"
+    };
+
+    const app = initializeApp(config);
+    const db = getDatabase(app);
+	// Giriş yapan kullanıcıyı ve yetkilerini al
+const currentUser = JSON.parse(sessionStorage.getItem("currentUser") || '{"username":"MİSAFİR", "type":"guest"}');
+const myPerms = currentUser.managed_sites || {};
+
+    /**
+     * @param {string} id - Site ID
+     * @param {string} page - Gidilecek sayfa (olaylar.html / takip.html)
+     * @param {string} actionType - 'event' veya 'patrol' (Hangi bildirim silinecek?)
+     */
+    window.go = async (id, page, actionType) => {
+        // 1. Güvenlik: Önceki configleri temizle ve yenisini mühürle
+        localStorage.removeItem("cga_node_v5");
+        sessionStorage.removeItem("selectedSiteId");
+        
+        localStorage.setItem("cga_node_v5", id);
+        sessionStorage.setItem("selectedSiteId", id);
+
+        // 2. Mantık: Sadece tıklanan butona ait uyarının fişini çek
+        const updateData = {};
+        if (actionType === 'event') {
+            updateData.hasEvent = false;
+        } else if (actionType === 'patrol') {
+            updateData.hasMissingPatrol = false;
+        }
+
+        try {
+            // Firebase Merkez Veritabanını güncelle
+            await update(ref(db, `sites/${id}`), updateData);
+            
+            // 3. Yönlendir
+            window.location.href = page;
+        } catch (err) {
+            console.error("Radar güncelleme hatası:", err);
+            // Hata olsa bile config mühürlendiği için sayfaya gitmesine izin veriyoruz
+            window.location.href = page;
+        }
+    };
+
+    // VERİ DİNLEME VE RADAR EKRANI
+    onValue(ref(db, "sites"), (snapshot) => {
+        const sites = snapshot.val();
+        const containers = {
+            event: document.getElementById('eventOnly'),
+            both: document.getElementById('bothAlert'),
+            patrol: document.getElementById('patrolOnly')
+        };
+        
+        // Sütunları temizle
+        Object.values(containers).forEach(c => c.innerHTML = "");
+
+        if (!sites) {
+            Object.values(containers).forEach(c => c.innerHTML = '<div class="empty-state">VERİ YOK</div>');
+            return;
+        }
+
+       for (let id in sites) {
+    // YETKİ KONTROLÜ: Admin değilse VE bu site ID'si yetki listesinde yoksa bu siteyi ATLA
+    if (currentUser.type !== 'admin' && !myPerms[id]) {
+        continue; 
+    }
+
+    const s = sites[id];
+    let list = null;
+
+            // AKILLI AYIRICI MANTIK (SÜTUN BELİRLEME)
+            if (s.hasEvent && s.hasMissingPatrol) {
+                list = containers.both;
+            } else if (s.hasEvent) {
+                list = containers.event;
+            } else if (s.hasMissingPatrol) {
+                list = containers.patrol;
+            }
+
+            if (list) {
+                const card = document.createElement('div');
+                card.className = 'site-card';
+                
+                // Butonlar tıklandığında sadece kendi "has" değerini false yapar
+                card.innerHTML = `
+                    <h2>${s.siteName.toUpperCase()}</h2>
+                    <div class="action-group">
+                        ${s.hasEvent ? `
+                            <button class="btn btn-event" onclick="go('${id}', 'olaylar.html', 'event')">
+                                <i class="fas fa-eye"></i> OLAYI İNCELE
+                            </button>` : ''
+                        }
+                        ${s.hasMissingPatrol ? `
+                            <button class="btn btn-patrol" onclick="go('${id}', 'takip.html', 'patrol')">
+                                <i class="fas fa-route"></i> DEVRİYE İNCELE
+                            </button>` : ''
+                        }
+                    </div>
+                `;
+                list.appendChild(card);
+            }
+        }
+
+        // BOŞ KALAN SÜTUNLARA "GÜVENLİ" YAZISI
+        Object.values(containers).forEach(c => {
+            if(!c.innerHTML) {
+                c.innerHTML = '<div class="empty-state"><i class="fas fa-check-circle" style="display:block; font-size:24px; margin-bottom:10px;"></i>BÖLGE GÜVENLİ</div>';
+            }
+        });
+    });
+</script>
+</body>
+</html>

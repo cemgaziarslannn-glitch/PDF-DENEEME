@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>KOLART MOBİL | ANALİZ</title>
+
+    <script>
+        (function() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1024;
+            if (!isMobile) { window.location.href = "tamam.html"; }
+        })();
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020617; /* Derin Gece Siyahı */
+            --card-grad: linear-gradient(165deg, #0f172a 0%, #020617 100%);
+            --accent: #38bdf8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #64748b;
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            padding: 16px;
+            padding-top: calc(20px + env(safe-area-inset-top));
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% -20%, #1e293b, transparent);
+        }
+
+        /* --- ÜST PANEL --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .logo { font-weight: 900; font-size: 22px; letter-spacing: -1px; text-transform: uppercase; }
+        .logo span { color: var(--accent); }
+
+        .back-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            padding: 10px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            font-weight: 800;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        /* --- KONTROL PANELİ --- */
+        .controls {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        
+        input, select {
+            background: #000;
+            border: 1px solid var(--border);
+            color: white;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .analiz-btn {
+            background: var(--accent);
+            color: #000;
+            width: 100%;
+            padding: 18px;
+            border-radius: 14px;
+            font-weight: 900;
+            border: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* --- ELITE KART TASARIMI --- */
+        .log-container { display: flex; flex-direction: column; gap: 20px; }
+
+        .log-item {
+            background: var(--card-grad);
+            border-radius: 26px;
+            border: 1px solid var(--border);
+            position: relative;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        /* Sol Taraftaki Durum Çubuğu (Görsel Hiyerarşi) */
+        .status-indicator {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 5px;
+        }
+        .status-ok-bar { background: var(--success); box-shadow: 2px 0 15px var(--success); }
+        .status-fail-bar { background: var(--danger); box-shadow: 2px 0 15px var(--danger); }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .p-info { display: flex; flex-direction: column; }
+        .p-name { font-size: 20px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+        .p-sub { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+
+        .v-tag { 
+            font-size: 10px; font-weight: 900; padding: 6px 12px; border-radius: 10px; 
+            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .gece { color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+        .gunduz { color: var(--success); background: rgba(16, 185, 129, 0.1); }
+
+        .shift-timeline {
+            background: rgba(255,255,255,0.03);
+            padding: 12px 16px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .range-text { font-family: 'JetBrains Mono'; font-size: 13px; font-weight: 700; color: var(--accent); }
+        .time-text { font-size: 11px; font-weight: 600; color: var(--text-muted); }
+
+        .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .data-box { display: flex; flex-direction: column; gap: 4px; }
+        .d-label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
+        .d-val { font-size: 15px; font-weight: 600; color: #e2e8f0; }
+        .d-val.highlight { color: #fff; font-weight: 700; }
+
+        #emptyMsg { text-align: center; padding: 80px 20px; color: var(--text-muted); font-size: 15px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">NÖBET<span>KAYIT</span></div>
+    <button class="back-btn" onclick="history.back()">GERİ DÖN</button>
+</header>
+
+<div class="controls">
+    <div class="search-grid">
+        <input type="date" id="mDate">
+        <select id="mUser"><option value="">PERSONEL SEÇ</option></select>
+    </div>
+    <button id="mFetch" class="analiz-btn">VERİLERİ ANALİZ ET</button>
+</div>
+
+<div id="mList" class="log-container"></div>
+<div id="emptyMsg">Analiz bekleniyor...</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+    const cfg = {
+        apiKey: "AIzaSyDCJWz80wWlzNhaM2Qnw_e5UkQoc8DoJaU",
+        authDomain: "merkez-14bf8.firebaseapp.com",
+        projectId: "merkez-14bf8",
+        storageBucket: "merkez-14bf8.firebasestorage.app",
+        messagingSenderId: "512943111807",
+        appId: "1:512943111807:web:675c769c7ede48216e494a"
+    };
+
+    const app = initializeApp(cfg, "mobile_final_elite");
+    const siteId = sessionStorage.getItem("selectedSiteId") || "Zirvekent";
+
+    async function start() {
+        const cRef = ref(getDatabase(app), `sites/${siteId}/config`);
+        const cSnap = await get(cRef);
+        const sDb = getDatabase(initializeApp(cSnap.val(), siteId + "_mFinal"));
+
+        const now = new Date();
+        const dStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        document.getElementById('mDate').value = dStr;
+
+        const uS = await get(ref(sDb, 'users'));
+        if(uS.exists()){
+            const sel = document.getElementById('mUser');
+            Object.values(uS.val()).forEach(u => {
+                const n = u.name || u.username;
+                if(n) sel.innerHTML += `<option value="${n}">${n}</option>`;
+            });
+        }
+
+        fetch(dStr, sDb);
+        document.getElementById('mFetch').onclick = () => fetch(document.getElementById('mDate').value, sDb);
+    }
+
+    async function fetch(v, db) {
+        const [y, m, d] = v.split('-');
+        const f = `${d}-${m}-${y}`;
+        const s = await get(ref(db, `tamamnbt/${f}`));
+        const data = s.val() ? Object.values(s.val()) : [];
+
+        const list = document.getElementById('mList');
+        const empty = document.getElementById('emptyMsg');
+        list.innerHTML = '';
+
+        if(data.length === 0) {
+            empty.style.display = 'block';
+            empty.innerText = "Sorgulanan tarihte nöbet kaydı bulunamadı.";
+        } else {
+            empty.style.display = 'none';
+            data.sort((a,b) => new Date(b.baslangic_zamani) - new Date(a.baslangic_zamani));
+            data.forEach(l => {
+                const start = new Date(l.baslangic_zamani);
+                const end = l.bitis_zamani ? new Date(l.bitis_zamani) : start;
+                const sT = start.toLocaleDateString('tr-TR');
+                const eT = end.toLocaleDateString('tr-TR');
+                
+                const isNight = sT !== f.replace(/-/g, '.');
+                const range = isNight ? `${sT} ➔ ${eT}` : `${sT} - ${sT}`;
+                const isOk = l.baslangic_noktasi === l.bitis_noktasi;
+
+                const div = document.createElement('div');
+                div.className = 'log-item';
+                div.innerHTML = `
+                    <div class="status-indicator ${isOk ? 'status-ok-bar' : 'status-fail-bar'}"></div>
+                    <div class="card-header">
+                        <div class="p-info">
+                            <span class="p-name">${l.teslim_eden || l.personel_adi || '-'}</span>
+                            <span class="p-sub">Saha Operasyon Görevlisi</span>
+                        </div>
+                        <div class="v-tag ${isNight ? 'gece' : 'gunduz'}">${isNight ? 'Gece Nöbeti' : 'Gündüz Nöbeti'}</div>
+                    </div>
+
+                    <div class="shift-timeline">
+                        <span class="range-text">${range}</span>
+                        <span class="time-text">${start.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})}</span>
+                    </div>
+
+                    <div class="card-grid">
+                        <div class="data-box">
+                            <span class="d-label">Çalışma Süresi</span>
+                            <span class="d-val highlight">${Math.floor(l.toplam_calisma_dakika/60)}s ${l.toplam_calisma_dakika%60}dk</span>
+                        </div>
+                        <div class="data-box">
+                            <span class="d-label">Nöbet Noktası</span>
+                            <span class="d-val">${l.baslangic_noktasi || '-'}</span>
+                        </div>
+                        <div class="data-box">
+                            <span class="d-label">Devralan Sorumlu</span>
+                            <span class="d-val">${l.teslim_alan || 'Devam Ediyor'}</span>
+                        </div>
+                        <div class="data-box">
+                            <span class="d-label">Sistem Kaydı</span>
+                            <span class="d-val">#${Math.floor(1000 + Math.random() * 9000)}</span>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+    }
+    start();
+</script>
+</body>
+</html>

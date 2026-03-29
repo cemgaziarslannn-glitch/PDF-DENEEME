@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b1a27">
+<link rel="manifest" href="manifest.json">
+
+<title>CGA Güvenlik Sistemleri - Giriş Paneli</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* 🔴 SCROLL TAMAMEN KAPALI */
+}
+
+:root{
+  --cga-bg-main: #0b1a27;
+  --cga-bg-secondary: #1a2b3f;
+  --cga-gold: #f1c40f;
+  --cga-gold-soft: rgba(241,196,15,0.35);
+  --cga-green: #2ecc71;
+  --cga-green-dark: #27ae60;
+  --cga-text-main: #ecf0f1;
+  --cga-text-soft: rgba(236,240,241,0.65);
+  --cga-card-bg: rgba(255,255,255,0.06);
+  --cga-border-soft: rgba(255,255,255,0.12);
+}
+
+body {
+  font-family:'Montserrat',sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0b1a27; 
+  background:
+    radial-gradient(circle at top, rgba(241,196,15,0.08), transparent 40%),
+    linear-gradient(135deg, var(--cga-bg-main), var(--cga-bg-secondary));
+  color: #ecf0f1;
+}
+
+.container {
+  width: 380px;
+  padding: 40px 30px 70px; 
+  border-radius: 26px;
+  background: var(--cga-card-bg);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 0 0 1px var(--cga-border-soft),
+              0 20px 50px rgba(0,0,0,0.7);
+  text-align: center;
+  transform: translateY(-20px);
+  max-height: calc(100% - 20px);
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--cga-gold);
+  text-shadow: 0 0 10px var(--cga-gold-soft), 0 0 25px rgba(241,196,15,0.25);
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.site-name{
+  display:none;
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:1px;
+  margin:1px 0 18px;
+  color:#2ecc71;
+  text-shadow: 0 0 10px rgba(46,204,113,0.6),
+               0 0 25px rgba(46,204,113,0.4);
+  animation: glowIn .6s ease;
+}
+
+@keyframes glowIn{
+  from{ opacity:0; transform:translateY(-6px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+h2 { font-size: 18px; color: #ecf0f1; margin-bottom: 30px; }
+
+.role-buttons {display:flex; justify-content: space-between; margin-bottom:25px;}
+.role-buttons button {
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:15px;
+  cursor:pointer;
+  font-weight:700;
+  background: linear-gradient(90deg,#223344,#1a2633);
+  color: var(--cga-text-soft);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.35);
+  transition: 0.3s;
+}
+
+.role-buttons button.active {
+  background: linear-gradient(90deg,var(--cga-gold),#f39c12);
+  color:#111;
+  box-shadow: 0 0 18px var(--cga-gold-soft);
+}
+
+.input-group { display:flex; flex-direction:column; text-align:left; animation:fadeIn 0.4s; margin-bottom: 28px;}
+
+input[type="text"], input[type="password"] {width:100%; padding:12px; margin:8px 0; border-radius:12px; border:none; background: rgba(255,255,255,0.1); color:white; font-size: 14px;}
+input::placeholder { color: rgba(236,240,241,0.6); }
+
+.remember {display:flex; align-items:center; gap:8px; font-size: 14px; margin-top:8px;}
+.remember input[type="checkbox"] { margin:0; cursor:pointer; }
+.remember label { margin:0; cursor:pointer; color: #ffffff; }
+
+.loginBtn {
+  width:100%;
+  padding:13px;
+  margin-top:8px;
+  border:none;
+  border-radius:16px;
+  background: linear-gradient(90deg,var(--cga-green-dark),var(--cga-green));
+  color:white;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+  box-shadow: 0 6px 20px rgba(46,204,113,0.45);
+  transition:0.25s;
+  margin-bottom: 24px;
+}
+.loginBtn:hover { background: linear-gradient(90deg,#2ecc71,#27ae60); transform:translateY(-2px); }
+
+.message { margin-top:15px; color:#e74c3c; font-weight:600; text-align:center; min-height:20px; }
+
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); align-items:center; justify-content:center; }
+.modal-content { background:#2c3e50; padding:25px; border-radius:20px; width:320px; text-align:center; }
+
+@keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+
+.corner-info{
+  position: fixed;
+  bottom: 12px;
+  right: 14px;
+  text-align: right;
+  font-size: 11px;
+  color: rgba(189,195,199,0.7);
+  line-height: 1.4;
+  user-select: none;
+  pointer-events: none;
+}
+
+.corner-info .version{ font-size: 10px; opacity: 0.8; }
+
+.cga-logo{ width: 450px; max-width: 80%; margin: 20px auto 0; }
+
+@keyframes logoIn{
+  from{ opacity:0; transform: translateY(-8px) scale(.95); }
+  to{ opacity:1; transform: translateY(0) scale(1); }
+}
+
+.corner-top{ position: fixed; top: calc(env(safe-area-inset-top, 0px) + 10px); right: 14px; font-size: 10px; color: rgba(189,195,199,0.7); user-select: none; pointer-events: none; }
+.corner-bottom{ position: fixed; bottom: 12px; right: 14px; font-size: 11px; color: rgba(189,195,199,0.7); user-select: none; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+<img src="logo.png" class="cga-logo" alt="CGA Güvenlik Sistemleri Logo">
+<div id="siteName" class="site-name"></div>
+<h2>Giriş Paneli</h2>
+
+<div class="role-buttons">
+    <button id="securityBtn" class="active">ŞİRKET GİRİŞİ</button>
+</div>
+
+<div id="securityGroup" class="input-group active">
+    <input type="text" id="secUsername" placeholder="Kullanıcı Adı">
+    <input type="password" id="secPassword" placeholder="Şifre">
+    <div class="remember">
+      <input type="checkbox" id="secRemember">
+      <label for="secRemember">Kullanıcıyı hatırla</label>
+    </div>
+    <button class="loginBtn" id="secLoginBtn">Giriş Yap</button>
+</div>
+
+<div class="message" id="message"></div>
+</div>
+
+<div class="modal" id="adminModal">
+  <div class="modal-content">
+    <h3>Yönetici Girişi</h3>
+    <input type="text" id="adminUsername" placeholder="Kullanıcı Adı">
+    <input type="password" id="adminPassword" placeholder="Şifre">
+    <button id="adminLoginBtn" class="loginBtn">Giriş Yap</button>
+    <button id="closeAdminBtn" style="background:#c0392b; margin-top:10px;">Kapat</button>
+  </div>
+</div>
+<button id="installBtn"
+  style="position: fixed; top: 12px; left: 12px; font-size: 20px; display:none; z-index:500;">
+  📲 Uygulamayı Yükle
+</button>
+<script type="module">
+const _0x45ac01=_0x2b16;(function(_0x321672,_0x401c92){const _0x5a35c7=_0x2b16,_0x5432a8=_0x321672();while(!![]){try{const _0x4a2cc0=-parseInt(_0x5a35c7(0x202))/0x1*(parseInt(_0x5a35c7(0x1da))/0x2)+-parseInt(_0x5a35c7(0x1bb))/0x3+parseInt(_0x5a35c7(0x1f3))/0x4*(parseInt(_0x5a35c7(0x1f1))/0x5)+parseInt(_0x5a35c7(0x1cb))/0x6+-parseInt(_0x5a35c7(0x1dd))/0x7+-parseInt(_0x5a35c7(0x1dc))/0x8+-parseInt(_0x5a35c7(0x1d8))/0x9*(-parseInt(_0x5a35c7(0x1d0))/0xa);if(_0x4a2cc0===_0x401c92)break;else _0x5432a8['push'](_0x5432a8['shift']());}catch(_0x236c3b){_0x5432a8['push'](_0x5432a8['shift']());}}}(_0x32b2,0x7eea3));const _0x1c2a45=_0x1066;function _0x32b2(){const _0x62cde8=['secRemember','href','12dtEceS','/sw.js','userChoice','load','AIzaSyAUjb4CBSZxjCTxpx8S_rGLOLDeRtDTs7U','Bağlantı\x20hatası!','675670YqAvnA','getElementById','sirket.html','2931264nilSnQ','company','textContent','https://bencga-db51b-default-rtdb.europe-west1.firebasedatabase.app','removeItem','security','2458485Zfonie','1:568702678520:web:82d3c6a98216990fa3d20d','key','value','shift','closeAdminBtn','3431076DeSbgR','exists','7416438nAwiKQ','16233885LOhYmH','3092046AMBmaw','style','toLocaleUpperCase','none','trim','20FHOAzh','securityGroup','11GbsXYt','adminPassword','beforeinstallprompt','Kullanıcı\x20bulunamadı!','secUsername','location','10679274ijsPoL','stringify','53186odYvvu','224746QEiJqK','4461744LdNNqh','4330319JKypIu','6355915cSgiBb','11690608GlxoyV','error','admin','4222652HfGWtO','yetkili.html','username','register','34611ITowQo','settings/siteName','installBtn','17962wLlEYa','prompt','116JYmYVi','mod.html','setItem','push','addEventListener','bencga-db51b.firebasestorage.app','990980VaxHrJ','querySelector','8zufZVR','click','secLoginBtn','type','checked','Kullanıcı\x20adı\x20ve\x20şifre\x20gerekli!','block','adminModal','Enter','forEach','message','Şifre\x20hatalı!','bencga-db51b','currentUser','4lzJAAZ','23nDckbt','parse','catch','47741750JvMnvY','adminLoginBtn','568702678520'];_0x32b2=function(){return _0x62cde8;};return _0x32b2();}(function(_0x3b5bbc,_0x33e366){const _0x4c5cd9=_0x2b16,_0x495ceb=_0x1066,_0x45e3d0=_0x3b5bbc();while(!![]){try{const _0x135057=-parseInt(_0x495ceb(0x145))/0x1*(parseInt(_0x495ceb(0x188))/0x2)+-parseInt(_0x495ceb(0x15c))/0x3*(-parseInt(_0x495ceb(0x179))/0x4)+-parseInt(_0x495ceb(0x178))/0x5+parseInt(_0x495ceb(0x159))/0x6*(parseInt(_0x495ceb(0x140))/0x7)+-parseInt(_0x495ceb(0x172))/0x8+-parseInt(_0x495ceb(0x183))/0x9+parseInt(_0x495ceb(0x166))/0xa*(parseInt(_0x495ceb(0x170))/0xb);if(_0x135057===_0x33e366)break;else _0x45e3d0[_0x4c5cd9(0x1ee)](_0x45e3d0[_0x4c5cd9(0x1c5)]());}catch(_0x287f9e){_0x45e3d0[_0x4c5cd9(0x1ee)](_0x45e3d0[_0x4c5cd9(0x1c5)]());}}}(_0x25dc,0xdd950));const _0x5b10c8=_0x256a;(function(_0xe4382e,_0x117dfb){const _0xf7267a=_0x2b16,_0x5f2889=_0x1066,_0x4eaf97=_0x256a,_0x327590=_0xe4382e();while(!![]){try{const _0x3c0189=-parseInt(_0x4eaf97(0x1f0))/0x1+parseInt(_0x4eaf97(0x1f8))/0x2+-parseInt(_0x4eaf97(0x1e9))/0x3+parseInt(_0x4eaf97(0x200))/0x4+-parseInt(_0x4eaf97(0x1f1))/0x5+parseInt(_0x4eaf97(0x212))/0x6+parseInt(_0x4eaf97(0x21e))/0x7;if(_0x3c0189===_0x117dfb)break;else _0x327590[_0x5f2889(0x17a)](_0x327590[_0x5f2889(0x15f)]());}catch(_0x4e0f1c){_0x327590[_0xf7267a(0x1ee)](_0x327590[_0xf7267a(0x1c5)]());}}}(_0x3def,0x9c5e3));import{initializeApp}from'https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js';function _0x1066(_0x2b4021,_0x2396e3){_0x2b4021=_0x2b4021-0x13c;const _0x45c598=_0x25dc();let _0x17bacd=_0x45c598[_0x2b4021];return _0x17bacd;}import{getDatabase,ref,get,child}from'https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js';const firebaseConfig={'apiKey':_0x1c2a45(0x158),'authDomain':_0x5b10c8(0x222),'databaseURL':_0x1c2a45(0x15b),'projectId':_0x5b10c8(0x210),'storageBucket':_0x5b10c8(0x213),'messagingSenderId':_0x5b10c8(0x1e3),'appId':_0x1c2a45(0x189),'measurementId':_0x5b10c8(0x225)},app=initializeApp(firebaseConfig),db=getDatabase(app),siteNameEl=document[_0x1c2a45(0x14e)](_0x5b10c8(0x21c)),securityBtn=document[_0x5b10c8(0x201)](_0x5b10c8(0x211)),securityGroup=document[_0x5b10c8(0x201)](_0x5b10c8(0x226)),cgaTitle=document[_0x5b10c8(0x1f4)](_0x5b10c8(0x206)),msg=document[_0x5b10c8(0x201)](_0x5b10c8(0x1eb)),adminModal=document[_0x5b10c8(0x201)](_0x5b10c8(0x21a)),secUsername=document[_0x1c2a45(0x14e)](_0x5b10c8(0x1fd)),secPassword=document[_0x5b10c8(0x201)]('secPassword'),secRemember=document[_0x5b10c8(0x201)](_0x5b10c8(0x205)),adminUsername=document[_0x5b10c8(0x201)](_0x5b10c8(0x1f9)),adminPassword=document[_0x5b10c8(0x201)](_0x5b10c8(0x21d)),adminLoginBtn=document[_0x5b10c8(0x201)](_0x1c2a45(0x171)),closeAdminBtn=document[_0x1c2a45(0x14e)](_0x5b10c8(0x1fc));let cgaClickCount=0x0;function _0x256a(_0x2dbf6c,_0x33a96a){_0x2dbf6c=_0x2dbf6c-0x1e3;const _0x5d77db=_0x3def();let _0x2c6dda=_0x5d77db[_0x2dbf6c];return _0x2c6dda;}cgaTitle[_0x5b10c8(0x1e4)](_0x1c2a45(0x13f),()=>{const _0x39e907=_0x1c2a45,_0x46435d=_0x5b10c8;cgaClickCount++,cgaClickCount>=0xa&&(adminModal[_0x39e907(0x13d)][_0x46435d(0x215)]=_0x46435d(0x20d),cgaClickCount=0x0);}),closeAdminBtn[_0x5b10c8(0x1e4)](_0x5b10c8(0x1ef),()=>adminModal[_0x1c2a45(0x13d)][_0x5b10c8(0x215)]=_0x5b10c8(0x21b)),window[_0x1c2a45(0x16c)](_0x1c2a45(0x155),()=>{const _0x3ec705=_0x2b16,_0x77fd98=_0x1c2a45,_0x264af0=_0x5b10c8,_0x498245=JSON[_0x264af0(0x1f2)](localStorage['getItem'](_0x264af0(0x1e8)));_0x498245&&(secUsername[_0x264af0(0x1e7)]=_0x498245[_0x264af0(0x203)],secPassword[_0x77fd98(0x16a)]=_0x498245[_0x264af0(0x209)],secRemember[_0x3ec705(0x1f7)]=!![]);}),[secUsername,secPassword][_0x1c2a45(0x157)](_0x5c4609=>{const _0x241ac1=_0x5b10c8;_0x5c4609[_0x241ac1(0x1e4)](_0x241ac1(0x1e5),()=>{const _0x5cb395=_0x2b16,_0xfd5b32=_0x241ac1;_0x5c4609[_0xfd5b32(0x1e7)]=_0x5c4609[_0xfd5b32(0x1e7)][_0x5cb395(0x1cd)]('tr');});});async function loginUser(_0x15642c,_0x1a2da5,_0x2ad889){const _0x9efeda=_0x2b16,_0x4d2e11=_0x1c2a45,_0x4e87d6=_0x5b10c8;_0x15642c=_0x15642c[_0x4e87d6(0x1ed)](),_0x1a2da5=_0x1a2da5[_0x4e87d6(0x1ed)](),msg[_0x4e87d6(0x1e6)]='';if(!_0x15642c||!_0x1a2da5){msg[_0x4e87d6(0x1e6)]=_0x4e87d6(0x219);return;}try{const _0x41b5c4=await get(child(ref(db),_0x9efeda(0x1e1)));if(_0x41b5c4[_0x4e87d6(0x20b)]()){const _0x3cbe4b=_0x41b5c4[_0x4d2e11(0x14a)]();if(_0x15642c===_0x3cbe4b[_0x4e87d6(0x203)]&&_0x1a2da5===_0x3cbe4b[_0x4e87d6(0x209)]){sessionStorage[_0x4e87d6(0x1f6)](_0x4e87d6(0x1ec),JSON[_0x4e87d6(0x216)]({'username':_0x15642c,'type':_0x9efeda(0x1e1)})),window[_0x4e87d6(0x20e)][_0x4e87d6(0x20f)]=_0x4e87d6(0x21f);return;}}const _0x360693=await get(child(ref(db),_0x4e87d6(0x20c)+_0x15642c));if(!_0x360693[_0x4e87d6(0x20b)]()){msg[_0x4e87d6(0x1e6)]=_0x4d2e11(0x177);return;}const _0x41a946=_0x360693[_0x4e87d6(0x204)]();if(_0x41a946[_0x4d2e11(0x187)]!==_0x1a2da5){msg[_0x4e87d6(0x1e6)]=_0x4e87d6(0x1ee);return;}sessionStorage[_0x9efeda(0x1ed)](_0x4d2e11(0x14c),JSON[_0x4d2e11(0x181)](_0x41a946));if(_0x2ad889===_0x4e87d6(0x1ff)){if(secRemember[_0x4d2e11(0x17b)])localStorage[_0x4e87d6(0x1f6)](_0x4e87d6(0x1e8),JSON[_0x4e87d6(0x216)]({'username':_0x15642c,'password':_0x1a2da5}));else localStorage[_0x4e87d6(0x1f7)](_0x4e87d6(0x1e8));if(_0x41a946[_0x9efeda(0x1f6)]===_0x4e87d6(0x1fb))window[_0x4e87d6(0x20e)][_0x4e87d6(0x20f)]=_0x9efeda(0x1ba);else{if(_0x41a946[_0x4e87d6(0x214)]===_0x4e87d6(0x1ff))window[_0x4e87d6(0x20e)][_0x4e87d6(0x20f)]=_0x4d2e11(0x13e);else _0x41a946[_0x4e87d6(0x214)]===_0x4d2e11(0x15a)?window[_0x4e87d6(0x20e)][_0x4e87d6(0x20f)]=_0x4e87d6(0x1fe):msg[_0x9efeda(0x1bd)]=_0x4e87d6(0x220);}}}catch(_0x242997){console[_0x4e87d6(0x1f3)](_0x242997),msg[_0x4e87d6(0x1e6)]=_0x4e87d6(0x1fa);}}document[_0x5b10c8(0x201)](_0x5b10c8(0x1ea))[_0x5b10c8(0x1e4)](_0x45ac01(0x1f4),()=>{const _0x1fcdde=_0x5b10c8;loginUser(secUsername[_0x1fcdde(0x1e7)],secPassword[_0x1fcdde(0x1e7)],_0x1fcdde(0x1ff));}),adminLoginBtn[_0x45ac01(0x1ef)](_0x5b10c8(0x1ef),()=>{const _0x23068c=_0x45ac01,_0x47e92b=_0x5b10c8;loginUser(adminUsername[_0x47e92b(0x1e7)],adminPassword[_0x23068c(0x1c4)],_0x23068c(0x1e1));});function _0x3def(){const _0x33e905=_0x45ac01,_0xdf9a51=_0x1c2a45,_0x59bbc7=['addEventListener','input',_0x33e905(0x1bd),_0xdf9a51(0x16a),_0xdf9a51(0x141),_0xdf9a51(0x167),_0xdf9a51(0x153),_0xdf9a51(0x175),_0x33e905(0x200),_0xdf9a51(0x18a),_0xdf9a51(0x17f),_0xdf9a51(0x13f),_0xdf9a51(0x152),_0x33e905(0x1de),_0x33e905(0x203),_0xdf9a51(0x165),_0xdf9a51(0x16b),_0xdf9a51(0x154),_0x33e905(0x1ed),_0xdf9a51(0x142),'2362692mQAnLX',_0xdf9a51(0x150),_0xdf9a51(0x144),_0xdf9a51(0x186),_0x33e905(0x1c6),_0xdf9a51(0x16d),_0x33e905(0x1e3),_0x33e905(0x1c0),_0xdf9a51(0x16f),_0xdf9a51(0x14e),_0xdf9a51(0x13d),_0xdf9a51(0x176),_0xdf9a51(0x14a),_0xdf9a51(0x14d),_0xdf9a51(0x143),_0x33e905(0x1c3),_0x33e905(0x1e7),_0xdf9a51(0x187),_0xdf9a51(0x156),_0xdf9a51(0x162),_0xdf9a51(0x147),_0xdf9a51(0x163),_0xdf9a51(0x184),_0xdf9a51(0x17e),_0x33e905(0x1ff),_0xdf9a51(0x182),_0x33e905(0x1c9),_0xdf9a51(0x168),_0xdf9a51(0x14b),_0xdf9a51(0x14f),_0xdf9a51(0x181),_0x33e905(0x1b4),_0x33e905(0x1b5),_0xdf9a51(0x173),_0xdf9a51(0x17c),_0xdf9a51(0x15e),_0xdf9a51(0x180),_0xdf9a51(0x151),_0xdf9a51(0x161),_0xdf9a51(0x174),_0xdf9a51(0x15d),_0xdf9a51(0x13c),_0xdf9a51(0x18b),_0xdf9a51(0x171),_0xdf9a51(0x149),'G-703BGXWTFN',_0xdf9a51(0x164),_0xdf9a51(0x16e),_0xdf9a51(0x148),_0xdf9a51(0x160)];return _0x3def=function(){return _0x59bbc7;},_0x3def();}function _0x2b16(_0x5d439b,_0x4d7f1f){_0x5d439b=_0x5d439b-0x1b0;const _0x32b267=_0x32b2();let _0x2b1658=_0x32b267[_0x5d439b];return _0x2b1658;}async function loadSiteName(){const _0x5c1f17=_0x1c2a45,_0x1287c=_0x5b10c8;try{const _0x1145fe=await get(child(ref(db),_0x1287c(0x208)));if(_0x1145fe[_0x1287c(0x20b)]()){const _0x397d88=_0x1145fe[_0x5c1f17(0x14a)]()[_0x1287c(0x1ed)]();_0x397d88!==''&&(siteNameEl[_0x1287c(0x1e6)]=_0x397d88,siteNameEl[_0x1287c(0x202)][_0x1287c(0x215)]=_0x1287c(0x228));}}catch(_0x1ee9a0){}}function _0x25dc(){const _0x51dd2c=_0x45ac01,_0x43f9bf=[_0x51dd2c(0x1d3),_0x51dd2c(0x1b8),_0x51dd2c(0x1f5),_0x51dd2c(0x1d4),'load','serviceWorker',_0x51dd2c(0x1fc),_0x51dd2c(0x1b6),_0x51dd2c(0x1b2),'admin',_0x51dd2c(0x1be),_0x51dd2c(0x1e6),'Yetki\x20hatalı!',_0x51dd2c(0x1ce),_0x51dd2c(0x1c5),_0x51dd2c(0x207),'1805622dnFNHr',_0x51dd2c(0x1c8),'flex',_0x51dd2c(0x1d1),_0x51dd2c(0x1e0),_0x51dd2c(0x205),_0x51dd2c(0x1c7),_0x51dd2c(0x1f0),_0x51dd2c(0x1e5),_0x51dd2c(0x1c4),_0x51dd2c(0x1f2),'addEventListener',_0x51dd2c(0x1d6),'preventDefault',_0x51dd2c(0x1e2),_0x51dd2c(0x1d2),_0x51dd2c(0x206),_0x51dd2c(0x1df),_0x51dd2c(0x1f8),_0x51dd2c(0x1ec),_0x51dd2c(0x1fd),_0x51dd2c(0x1e4),_0x51dd2c(0x1d5),_0x51dd2c(0x1c1),_0x51dd2c(0x1eb),'push',_0x51dd2c(0x1f7),_0x51dd2c(0x1fa),_0x51dd2c(0x1b3),_0x51dd2c(0x1b1),_0x51dd2c(0x1fe),'siteName',_0x51dd2c(0x1d9),'securityBtn',_0x51dd2c(0x1ca),_0x51dd2c(0x1d7),_0x51dd2c(0x1fb),_0x51dd2c(0x1bc),'password',_0x51dd2c(0x1db),_0x51dd2c(0x1c2),_0x51dd2c(0x1cf),'bencga-db51b.firebaseapp.com','keydown',_0x51dd2c(0x1cc),'guvenlik.html',_0x51dd2c(0x1f4),_0x51dd2c(0x1e9),'securityUser',_0x51dd2c(0x1bf),'.cga-logo',_0x51dd2c(0x1b7),_0x51dd2c(0x201),_0x51dd2c(0x204),'users/',_0x51dd2c(0x1f9),_0x51dd2c(0x1ea),'val',_0x51dd2c(0x1f6),_0x51dd2c(0x200),_0x51dd2c(0x1b0),_0x51dd2c(0x1b9),'display','adminUsername'];return _0x25dc=function(){return _0x43f9bf;},_0x25dc();}loadSiteName(),document[_0x1c2a45(0x16c)](_0x5b10c8(0x221),function(_0x33f66c){const _0x1b38ec=_0x1c2a45,_0x52d932=_0x5b10c8;_0x33f66c[_0x52d932(0x207)]===_0x1b38ec(0x185)&&(document[_0x52d932(0x201)](_0x52d932(0x1ea))[_0x52d932(0x1ef)](),adminModal[_0x52d932(0x202)][_0x52d932(0x215)]==='flex'&&document[_0x52d932(0x201)](_0x52d932(0x223))[_0x52d932(0x1ef)]());}),window[_0x5b10c8(0x1e4)](_0x5b10c8(0x218),()=>{const _0x4605e1=_0x45ac01,_0x22c0c1=_0x1c2a45,_0x3e1fd9=_0x5b10c8;let _0x433f25;const _0x28f7ee=document[_0x22c0c1(0x14e)](_0x4605e1(0x1e8));if(!_0x28f7ee)return;window[_0x22c0c1(0x16c)](_0x3e1fd9(0x1f5),_0x1e0822=>{const _0x1de307=_0x3e1fd9;_0x1e0822[_0x1de307(0x227)](),_0x433f25=_0x1e0822,_0x28f7ee[_0x1de307(0x202)][_0x1de307(0x215)]=_0x1de307(0x228);}),_0x28f7ee[_0x3e1fd9(0x1e4)](_0x22c0c1(0x13f),async()=>{const _0x41c210=_0x3e1fd9;_0x28f7ee[_0x41c210(0x202)][_0x41c210(0x215)]=_0x41c210(0x21b),_0x433f25&&(_0x433f25[_0x41c210(0x224)](),await _0x433f25[_0x41c210(0x217)],_0x433f25=null);}),_0x3e1fd9(0x20a)in navigator&&navigator[_0x3e1fd9(0x20a)][_0x22c0c1(0x169)](_0x22c0c1(0x17d))[_0x22c0c1(0x146)](console[_0x22c0c1(0x165)]);});
+</script>
+
+<div class="corner-bottom">
+  © 2025 CGA Güvenlik Sistemleri
+</div>
+
+<div class="corner-top">
+  v1.0.0 
+</div>
+
+</body>
+</html>

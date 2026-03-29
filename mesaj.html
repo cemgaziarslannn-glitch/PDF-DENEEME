@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGA COMMAND v20.1 | PRESTIGE EXECUTIVE</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --ana: #00e5ff; 
+            --arka: #00080a; 
+            --panel: #0a1114;
+            --kenar: rgba(0, 229, 255, 0.15); 
+            --yazi: #ffffff; 
+            --secili-kirmizi: #ff0044; 
+            --altin: #ffcc00;
+        }
+
+        /* Temel Reset ve Scrollbar */
+        * { box-sizing: border-box; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--kenar); border-radius: 10px; }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--arka); 
+            color: var(--yazi); 
+            margin: 0; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* Yan Panel */
+        .sidebar { width: 380px; background: var(--panel); border-right: 1px solid var(--kenar); display: flex; flex-direction: column; height: 100vh; }
+        .side-head { padding: 25px; border-bottom: 1px solid var(--kenar); }
+        .logo { font-size: 18px; font-weight: 800; color: var(--ana); letter-spacing: 1px; }
+
+        .search-area { padding: 15px 20px; }
+        .search-input { width: 100%; background: #000; border: 1px solid var(--kenar); padding: 12px; border-radius: 10px; color: #fff; outline: none; font-size: 13px; }
+
+        .tabs { display: flex; padding: 0 20px 15px; gap: 5px; }
+        .tab { flex: 1; padding: 10px 2px; font-size: 9px; font-weight: 800; text-align: center; cursor: pointer; border-radius: 8px; border: 1px solid var(--kenar); color: #666; text-transform: uppercase; }
+        .tab.active { background: var(--ana); color: #000; border-color: var(--ana); }
+
+        .bulk-actions { padding: 0 20px 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .bulk-btn { background: rgba(0, 229, 255, 0.05); border: 1px solid var(--kenar); color: var(--ana); padding: 10px; border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer; }
+        .bulk-btn:hover:not(:disabled) { background: var(--ana); color: #000; }
+        .bulk-btn.active-mode { border-color: var(--altin); background: rgba(255, 204, 0, 0.15); color: var(--altin); }
+
+        .project-list-container { flex: 1; overflow-y: auto; padding: 0 20px 20px; }
+        .site-card { padding: 14px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; border: 1px solid var(--kenar); background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+        .site-card.selected { border-color: var(--secili-kirmizi); background: rgba(255, 0, 68, 0.1); }
+
+        /* Ana Sahne */
+        .main-stage { flex: 1; display: flex; flex-direction: column; background: radial-gradient(circle at 50% 50%, #0d161a 0%, #00080a 100%); position: relative; }
+        
+        .top-info { padding: 20px 40px; border-bottom: 1px solid var(--kenar); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); }
+
+        .workspace { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 60px; overflow-y: auto; }
+
+        /* Kontrol Ünitesi */
+        .control-unit { 
+            width: 100%; 
+            max-width: 800px; 
+            background: rgba(10, 17, 20, 0.6); 
+            border: 1px solid var(--kenar); 
+            border-radius: 30px; 
+            padding: 40px; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        .target-label { font-weight: 800; font-size: 13px; color: var(--ana); display: flex; align-items: center; gap: 10px; margin-bottom: 5px; opacity: 0.8; }
+        
+        textarea { 
+            width: 100%; 
+            height: 180px; 
+            background: rgba(0,0,0,0.4); 
+            border: 1px solid var(--kenar); 
+            border-radius: 20px; 
+            padding: 20px; 
+            color: #fff; 
+            font-size: 16px; 
+            resize: none; 
+            outline: none; 
+            margin: 15px 0 25px 0; 
+            font-family: 'Plus Jakarta Sans';
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+        textarea:focus { border-color: var(--ana); box-shadow: 0 0 20px rgba(0, 229, 255, 0.1); }
+
+        .btn-broadcast { 
+            width: 100%; 
+            padding: 20px; 
+            background: var(--ana); 
+            color: #000; 
+            border: none; 
+            border-radius: 15px; 
+            font-weight: 900; 
+            font-size: 16px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 12px;
+            letter-spacing: 1px;
+        }
+        .btn-broadcast:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 229, 255, 0.3); }
+
+        /* Geçmiş Bölümü */
+        .history-section { margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(0, 229, 255, 0.05); }
+        .history-card { background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; margin-bottom: 10px; }
+        .history-card b { color: var(--altin); font-size: 11px; }
+        .history-card p { font-size: 13px; margin: 8px 0; color: #bbb; line-height: 1.4; }
+        
+        /* Şablon Paneli */
+        .temp-panel { width: 320px; background: var(--panel); border-left: 1px solid var(--kenar); display: flex; flex-direction: column; }
+        .temp-head { padding: 80px 20px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--kenar); }
+        .add-btn { width: 35px; height: 35px; border-radius: 10px; background: var(--ana); color: #000; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        .exit-control { position: fixed; top: 20px; right: 25px; z-index: 1000; }
+        .btn-exit { background: rgba(255, 204, 0, 0.1); border: 1px solid var(--altin); color: var(--altin); padding: 10px 20px; border-radius: 12px; font-size: 11px; font-weight: 800; cursor: pointer; text-decoration: none; }
+
+        #loader { display: none; text-align: center; color: var(--ana); font-size: 11px; margin-top: 15px; letter-spacing: 2px; }
+        #progressContainer { display: none; width: 100%; background: #000; height: 4px; margin-top: 15px; border-radius: 10px; overflow: hidden; }
+        #progressBar { width: 0%; height: 100%; background: var(--ana); }
+
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--ana); color: #000; padding: 12px 30px; border-radius: 50px; font-weight: 800; display: none; z-index: 9999; }
+
+        .modal-overlay { position: fixed; top:0; left:0; width: 100%; height:100%; background: rgba(0,0,0,0.9); display: none; align-items:center; justify-content:center; z-index: 10000; backdrop-filter: blur(10px); }
+        .modal { width: 500px; background: #0a1114; border: 1px solid var(--ana); border-radius: 20px; padding: 30px; }
+
+        .staff-view-container { display: none; padding: 20px; flex: 1; overflow-y: auto; }
+        .staff-card { padding: 12px; border-radius: 10px; border: 1px solid var(--kenar); margin-bottom: 8px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 10px; }
+        .staff-card.active { border-color: var(--altin); background: rgba(255, 204, 0, 0.1); }
+    </style>
+</head>
+<body>
+
+<div class="exit-control"><a href="sirket.html" class="btn-exit"><i class="fas fa-arrow-left"></i> SİSTEMDEN ÇIK</a></div>
+<div id="toast">MESAJ GÖNDERİLDİ</div>
+
+<div class="modal-overlay" id="readerModal" style="display:none; z-index: 20000;">
+    <div class="modal" style="width:400px;">
+        <h3 style="color:var(--ana); margin:0 0 20px 0; border-bottom:1px solid var(--kenar); padding-bottom:10px;">OKUYAN PERSONEL</h3>
+        <div id="readerListBody" style="max-height: 300px; overflow-y: auto; font-size: 13px;"></div>
+        <button onclick="document.getElementById('readerModal').style.display='none'" style="width:100%; margin-top:20px; padding:12px; background:var(--ana); border:none; border-radius:10px; font-weight:800; cursor:pointer;">KAPAT</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <h2 id="modalTitle" style="color:var(--ana); margin-bottom:20px;">ŞABLON YÖNETİMİ</h2>
+        <input type="hidden" id="editKey">
+        <input type="text" id="tTitle" placeholder="Başlık" style="width:100%; padding:15px; background:#000; border:1px solid var(--kenar); color:#fff; border-radius:10px; margin-bottom:15px; outline:none;">
+        <textarea id="tText" style="height: 120px; margin:0 0 15px 0; font-size: 14px;" placeholder="Mesaj içeriği..."></textarea>
+        <div style="display: flex; gap: 10px;">
+            <button onclick="saveTemplate()" style="flex:2; padding:15px; background:var(--ana); border:none; border-radius:10px; font-weight:800; cursor:pointer;">KAYDET</button>
+            <button onclick="closeModal()" style="flex:1; padding:15px; background:transparent; border:1px solid #333; color:#fff; border-radius:10px; cursor:pointer;">İPTAL</button>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar">
+    <div class="side-head"><div class="logo"><i class="fas fa-shield-halved"></i> CGA COMMAND</div></div>
+    
+    <div id="projectListSection" style="display: contents;">
+        <div class="search-area"><input type="text" id="siteSearch" class="search-input" placeholder="Birim ara..." onkeyup="renderSites()"></div>
+        <div class="tabs">
+            <div id="tab-my" class="tab active" onclick="setTab('my')">Benimkiler <span id="myCount"></span></div>
+            <div id="tab-all" class="tab" onclick="setTab('all')">Tümü <span id="allCount"></span></div>
+            <div id="tab-sel" class="tab" onclick="setTab('sel')">Seçili <span id="selCount"></span></div>
+        </div>
+        <div class="bulk-actions">
+            <button class="bulk-btn" onclick="selectAllVisible()">TÜMÜNÜ SEÇ</button>
+            <button class="bulk-btn" style="color:#ff4d4d;" onclick="clearSelection()">TEMİZLE</button>
+            <button id="sideAmirBtn" class="bulk-btn" onclick="toggleAmirMode()">SADECE AMİR</button>
+            <button id="sideIndBtn" class="bulk-btn" onclick="enterIndividualMode()" disabled>BİREYSEL</button>
+        </div>
+        <div class="project-list-container" id="projectList"></div>
+    </div>
+
+    <div id="staffListSection" class="staff-view-container">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <b style="color:var(--altin);">PERSONEL SEÇ</b>
+            <button onclick="closeIndividualMode()" style="background:none; border:1px solid #333; color:#888; border-radius:5px; padding:5px 10px; cursor:pointer; font-size:10px;">GERİ</button>
+        </div>
+        <div id="staffList"></div>
+    </div>
+</div>
+
+<div class="main-stage">
+    <div class="top-info">
+        <div style="font-size: 10px; font-weight: 800; color:var(--ana); letter-spacing: 1px;"><i class="fas fa-circle" style="font-size:8px; color:#00ff00;"></i> SİSTEM ÇEVRİMİÇİ</div>
+        <div id="opLabel" onclick="toggleSenderIdentity()" style="font-size: 12px; font-weight: 900; color:var(--altin); cursor:pointer;">...</div>
+    </div>
+
+    <div class="workspace">
+        <div class="control-unit">
+            <div class="target-label" id="targetDesc"><i class="fas fa-broadcast-tower"></i> HEDEF: TÜM SEÇİLİ BİRİMLER</div>
+            <textarea id="msgInput" placeholder="Operasyonel talimatınızı buraya yazın..."></textarea>
+            
+            <button id="sendBtn" class="btn-broadcast" onclick="executeBroadcast()">
+                <i class="fas fa-paper-plane"></i> SİNYALİ GÖNDER
+            </button>
+
+            <div id="loader">ŞİFRELİ VERİ İLETİLİYOR...</div>
+            <div id="progressContainer"><div id="progressBar"></div></div>
+
+            <div class="history-section">
+                <div style="font-size: 10px; font-weight: 800; color: #555; margin-bottom: 15px; letter-spacing: 2px;">
+                    <i class="fas fa-clock-rotate-left"></i> SON 3 VERİ İLETİŞİMİ
+                </div>
+                <div id="historyBody"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="temp-panel">
+    <div class="temp-head">
+        <span style="font-weight: 800; font-size: 12px; color: var(--ana);">HAZIR ŞABLONLAR</span>
+        <button class="add-btn" onclick="openTemplateForm()"><i class="fas fa-plus"></i></button>
+    </div>
+    <div id="tempList" style="flex:1; overflow-y:auto; padding:15px;"></div>
+</div>
+
+<script type="module">
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getDatabase, ref, onValue, get, push, set, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+    const cfg = {
+      apiKey: "AIzaSyDCJWz80wWlzNhaM2Qnw_e5UkQoc8DoJaU",
+  authDomain: "merkez-14bf8.firebaseapp.com",
+  projectId: "merkez-14bf8",
+  storageBucket: "merkez-14bf8.firebasestorage.app",
+  messagingSenderId: "512943111807",
+  appId: "1:512943111807:web:675c769c7ede48216e494a",
+  measurementId: "G-BYS8FPKY7H"
+    };
+
+    const core = initializeApp(cfg, "command_v20");
+    const db = getDatabase(core);
+    const me = JSON.parse(sessionStorage.getItem("currentUser") || '{"username":"AMİR","managed_sites":{}}');
+    
+    let isCorporateMode = false, allSites = {}, selected = [], currentTab = 'my', amirMode = false, activeIndividualUser = null, individualSiteId = null, visibleIds = [];
+
+    document.getElementById("opLabel").innerText = "OPERATÖR: " + me.username.toUpperCase();
+
+    onValue(ref(db, "sites"), (snap) => {
+        allSites = snap.val() || {};
+        updateTabCounters();
+        renderSites();
+        startAutoSync();
+    });
+
+    function startAutoSync() {
+        onValue(ref(db, `broadcast_history/${me.username}`), (snap) => {
+            const history = snap.val() || {};
+            Object.keys(history).forEach(ts => {
+                const msg = history[ts];
+                if (!msg.status) return;
+                Object.keys(msg.status).forEach(sId => {
+                    if (!allSites[sId]) return;
+                    try {
+                        const sApp = !getApps().find(a => a.name === sId) ? initializeApp(allSites[sId].config, sId) : getApp(sId);
+                        const sDB = getDatabase(sApp);
+                        Object.keys(msg.status[sId]).forEach(uName => {
+                            if (msg.status[sId][uName].read) return;
+                            onValue(ref(sDB, `user_messages/${uName}/MSG_${ts}`), (mSnap) => {
+                                const mData = mSnap.val();
+                                if (mData && mData.is_read) {
+                                    update(ref(db, `broadcast_history/${me.username}/${ts}/status/${sId}/${uName}`), {
+                                        read: true,
+                                        read_time: mData.read_at || Date.now()
+                                    });
+                                }
+                            });
+                        });
+                    } catch(e) {}
+                });
+            });
+        });
+    }
+
+    window.executeBroadcast = async () => {
+        const msg = document.getElementById("msgInput").value;
+        if(!msg) return notify("Mesaj giriniz!");
+        if(!amirMode && !activeIndividualUser && selected.length === 0) return notify("Hedef seçiniz!");
+
+        const btn = document.getElementById("sendBtn"), loader = document.getElementById("loader"), prog = document.getElementById("progressContainer"), bar = document.getElementById("progressBar");
+        btn.disabled = true; loader.style.display = "block"; prog.style.display = "block"; bar.style.width = "0%";
+
+        const ts = Date.now(), tr = new Date().toLocaleDateString('tr-TR'), st = new Date().toLocaleTimeString('tr-TR');
+        const targets = activeIndividualUser ? [individualSiteId] : selected;
+        const tracking = {};
+        let done = 0;
+
+        for(let sId of targets) {
+            try {
+                const sApp = !getApps().find(a => a.name === sId) ? initializeApp(allSites[sId].config, sId) : getApp(sId);
+                const sDB = getDatabase(sApp);
+                let users = [];
+
+                if(amirMode) {
+                    const amirSnap = await get(ref(sDB, "settings/cizelgeAmiri"));
+                    if(amirSnap.exists()) users = [amirSnap.val()];
+                } else if(activeIndividualUser) {
+                    users = [activeIndividualUser];
+                } else {
+                    const uSnap = await get(ref(sDB, "users"));
+                    if(uSnap.exists()) users = Object.values(uSnap.val()).filter(u => u.type === "security").map(u => u.username);
+                }
+
+                if(users.length > 0) {
+                    tracking[sId] = {};
+                    for(let u of users) {
+                        const from = isCorporateMode ? "KOLART GÜVENLİK" : me.username;
+                        await set(ref(sDB, `user_messages/${u}/MSG_${ts}`), { from, content: msg, timestamp: ts, tarih: tr, saat: st, is_read: false });
+                        tracking[sId][u] = { siteName: allSites[sId].siteName, read: false, read_time: null };
+                    }
+                }
+                done++;
+                bar.style.width = (done/targets.length * 100) + "%";
+            } catch(e) {}
+        }
+
+        await set(ref(db, `broadcast_history/${me.username}/${ts}`), { content: msg, tarih: tr, saat: st, status: tracking });
+        
+        btn.disabled = false; loader.style.display = "none"; prog.style.display = "none";
+        document.getElementById("msgInput").value = "";
+        notify("BAŞARIYLA GÖNDERİLDİ");
+        if(activeIndividualUser) closeIndividualMode();
+    };
+
+    onValue(ref(db, `broadcast_history/${me.username}`), (snap) => {
+        const body = document.getElementById("historyBody");
+        body.innerHTML = "";
+        const data = snap.val() || {};
+        Object.keys(data).sort().reverse().slice(0, 3).forEach(ts => {
+            const m = data[ts];
+            let total = 0, read = 0, readers = [];
+            if(m.status) {
+                Object.keys(m.status).forEach(sId => {
+                    Object.keys(m.status[sId]).forEach(u => {
+                        total++;
+                        if(m.status[sId][u].read) {
+                            read++;
+                            readers.push({ name: u, site: m.status[sId][u].siteName, time: new Date(m.status[sId][u].read_time).toLocaleTimeString('tr-TR') });
+                        }
+                    });
+                });
+            }
+            const div = document.createElement("div");
+            div.className = "history-card";
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between;">
+                    <b>${m.tarih} ${m.saat}</b>
+                    <button onclick='showReaders(${JSON.stringify(readers)}, ${total})' style="background:none; border:none; color:var(--ana); font-size:10px; cursor:pointer; font-weight:800;">
+                        ${read}/${total} OKUNDU
+                    </button>
+                </div>
+                <p>${m.content}</p>
+            `;
+            body.appendChild(div);
+        });
+    });
+
+    window.showReaders = (list, total) => {
+        const body = document.getElementById("readerListBody");
+        body.innerHTML = list.length ? "" : "Henüz kimse okumadı.";
+        list.forEach(r => {
+            body.innerHTML += `<div style="padding:10px 0; border-bottom:1px solid #111; display:flex; justify-content:space-between;">
+                <span>${r.name} (${r.site})</span> <span style="color:var(--ana)">${r.time}</span>
+            </div>`;
+        });
+        document.getElementById("readerModal").style.display = "flex";
+    };
+
+    window.renderSites = () => {
+        const cont = document.getElementById("projectList"), search = document.getElementById("siteSearch").value.toLowerCase();
+        cont.innerHTML = ""; visibleIds = [];
+        for (let id in allSites) {
+            const isMine = me.managed_sites && me.managed_sites[id], isS = selected.includes(id);
+            if (currentTab === 'my' && !isMine) continue;
+            if (currentTab === 'sel' && !isS) continue;
+            if (search && !allSites[id].siteName.toLowerCase().includes(search)) continue;
+            visibleIds.push(id);
+            const div = document.createElement("div"); div.className = `site-card ${isS ? 'selected' : ''}`;
+            div.innerHTML = `<span>${allSites[id].siteName.toUpperCase()}</span> <i class="fas ${isS ? 'fa-check-circle' : 'fa-circle'}" style="opacity:0.3"></i>`;
+            div.onclick = () => { 
+                if(isS) selected = selected.filter(x => x !== id); else selected.push(id); 
+                updateTabCounters(); renderSites(); 
+                document.getElementById("sideIndBtn").disabled = selected.length !== 1;
+            };
+            cont.appendChild(div);
+        }
+    };
+
+    window.updateTabCounters = () => {
+        document.getElementById("allCount").innerText = Object.keys(allSites).length;
+        let my = 0; for(let id in allSites) if(me.managed_sites && me.managed_sites[id]) my++;
+        document.getElementById("myCount").innerText = my;
+        document.getElementById("selCount").innerText = selected.length;
+    };
+
+    window.setTab = (t) => { currentTab = t; document.querySelectorAll('.tab').forEach(el => el.classList.remove('active')); document.getElementById('tab-'+t).classList.add('active'); renderSites(); };
+    window.selectAllVisible = () => { visibleIds.forEach(id => { if(!selected.includes(id)) selected.push(id); }); updateTabCounters(); renderSites(); };
+    window.clearSelection = () => { selected = []; updateTabCounters(); renderSites(); document.getElementById("sideIndBtn").disabled = true; };
+    window.notify = (m) => { const t = document.getElementById("toast"); t.innerText = m; t.style.display = "block"; setTimeout(() => t.style.display = "none", 3000); };
+    
+    // AMİR MODU GÜNCELLEMESİ (HEDEF YAZISI DEĞİŞİMİ)
+    window.toggleAmirMode = () => { 
+        amirMode = !amirMode; 
+        document.getElementById("sideAmirBtn").classList.toggle("active-mode"); 
+        const desc = document.getElementById("targetDesc");
+        if(amirMode) {
+            desc.innerHTML = `<i class="fas fa-user-shield"></i> HEDEF: PROJE AMİRLERİ`;
+            desc.style.color = "var(--altin)";
+        } else {
+            desc.innerHTML = `<i class="fas fa-broadcast-tower"></i> HEDEF: TÜM SEÇİLİ BİRİMLER`;
+            desc.style.color = "var(--ana)";
+        }
+    };
+
+    window.toggleSenderIdentity = () => { isCorporateMode = !isCorporateMode; const lbl = document.getElementById("opLabel"); lbl.innerText = isCorporateMode ? "GÖNDERİCİ: KOLART GÜVENLİK" : "OPERATÖR: " + me.username.toUpperCase(); lbl.style.color = isCorporateMode ? "var(--ana)" : "var(--altin)"; };
+
+    window.enterIndividualMode = async () => {
+        if(selected.length !== 1) return;
+        individualSiteId = selected[0];
+        document.getElementById("projectListSection").style.display = "none";
+        document.getElementById("staffListSection").style.display = "flex";
+        const staffCont = document.getElementById("staffList");
+        staffCont.innerHTML = "Yükleniyor...";
+        const sApp = !getApps().find(a => a.name === individualSiteId) ? initializeApp(allSites[individualSiteId].config, individualSiteId) : getApp(individualSiteId);
+        const snap = await get(ref(getDatabase(sApp), "users"));
+        staffCont.innerHTML = "";
+        if(snap.exists()){
+            Object.values(snap.val()).filter(u => u.type === "security").forEach(u => {
+                const div = document.createElement("div"); div.className = "staff-card";
+                div.innerHTML = `<i class="fas fa-user"></i> ${u.username}`;
+                div.onclick = () => { 
+                    document.querySelectorAll('.staff-card').forEach(c => c.classList.remove('active'));
+                    div.classList.add('active'); activeIndividualUser = u.username;
+                    document.getElementById("targetDesc").innerHTML = `HEDEF: <span style="color:var(--altin)">${u.username.toUpperCase()}</span>`;
+                };
+                staffCont.appendChild(div);
+            });
+        }
+    };
+
+    window.closeIndividualMode = () => { 
+        document.getElementById("projectListSection").style.display = "contents"; 
+        document.getElementById("staffListSection").style.display = "none"; 
+        activeIndividualUser = null; 
+        document.getElementById("targetDesc").innerHTML = `<i class="fas fa-broadcast-tower"></i> HEDEF: TÜM SEÇİLİ BİRİMLER`;
+    };
+
+    window.openTemplateForm = () => { document.getElementById("modalOverlay").style.display = "flex"; document.getElementById("editKey").value = ""; document.getElementById("tTitle").value = ""; document.getElementById("tText").value = ""; };
+    window.closeModal = () => document.getElementById("modalOverlay").style.display = "none";
+    window.saveTemplate = () => {
+        const key = document.getElementById("editKey").value, title = document.getElementById("tTitle").value, text = document.getElementById("tText").value;
+        if(title && text) { key ? set(ref(db, `global_templates/${key}`), {title, text}) : push(ref(db, "global_templates"), {title, text}); closeModal(); }
+    };
+    
+    // ŞABLON LİSTESİ GÜNCELLEMESİ (KALEM SİMGESİ EKLENDİ)
+    onValue(ref(db, "global_templates"), (snap) => {
+        const list = document.getElementById("tempList"); list.innerHTML = "";
+        const data = snap.val() || {};
+        for (let key in data) {
+            const d = document.createElement("div"); d.style = "background:rgba(255,255,255,0.03); border:1px solid var(--kenar); border-radius:10px; padding:12px; margin-bottom:10px; cursor:pointer; position:relative;";
+            d.innerHTML = `<div style="position:absolute; top:5px; right:5px; display:flex; gap:8px;">
+                <i class="fas fa-pen" style="font-size:11px; color:var(--ana);" onclick="event.stopPropagation(); editTemplate('${key}', '${data[key].title}', \`${data[key].text}\`)"></i>
+                <i class="fas fa-trash" style="font-size:11px; color:#555;" onclick="event.stopPropagation(); deleteTemplate('${key}')"></i>
+            </div><b style="font-size:12px; color:var(--ana)">${data[key].title}</b><p style="font-size:10px; color:#666; margin:5px 0 0 0;">${data[key].text.substring(0,30)}...</p>`;
+            d.onclick = () => { document.getElementById("msgInput").value = data[key].text; notify("Şablon Uygulandı"); };
+            list.appendChild(d);
+        }
+    });
+
+    window.editTemplate = (key, title, text) => { 
+        document.getElementById("editKey").value = key; 
+        document.getElementById("tTitle").value = title; 
+        document.getElementById("tText").value = text; 
+        document.getElementById("modalOverlay").style.display = "flex"; 
+    };
+    window.deleteTemplate = (key) => { if(confirm("Silinsin mi?")) remove(ref(db, `global_templates/${key}`)); };
+
+</script>
+</body>
+</html>

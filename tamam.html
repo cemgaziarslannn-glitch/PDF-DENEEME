@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KOLART GÜVENLİK | NÖBET TAKİP</title>
+    
+    <script>
+        (function() {
+            // Mobil cihazları ve küçük ekranları algıla
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 1024;
+            
+            if (isMobile) {
+                // Eğer mobilden giriliyorsa direkt yönlendir
+                window.location.href = "tamammobil.html";
+            }
+        })();
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020617;
+            --panel: rgba(15, 23, 42, 0.95);
+            --accent: #38bdf8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text: #f1f5f9;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            background-image: radial-gradient(circle at 50% -20%, #1e293b, transparent);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container { padding: 40px; max-width: 1500px; margin: 0 auto; position: relative; }
+
+        /* BAŞLIK VE LOGO ALANI */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-right: 150px;
+        }
+
+        .logo { font-weight: 800; font-size: 26px; letter-spacing: -1px; text-transform: uppercase; }
+        .logo span { color: var(--accent); text-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+
+        /* SAĞ ÜST GERİ BUTONU */
+        .back-btn-top {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+        }
+        .back-btn-top:hover { transform: scale(1.05); background: #ff5252; }
+
+        /* KONTROL PANELİ */
+        .control-grid {
+            background: var(--panel);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.5fr auto;
+            gap: 20px;
+            align-items: flex-end;
+            margin-bottom: 35px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 10px; }
+        .input-group label { font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        
+        input, select {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 14px;
+            border-radius: 12px;
+            outline: none;
+            font-family: 'Outfit';
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--accent); }
+
+        .btn-fetch {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 0 40px;
+            border-radius: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            height: 50px;
+            transition: 0.4s;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-fetch:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4); }
+
+        /* TABLO */
+        .table-card {
+            background: var(--panel);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: rgba(255,255,255,0.03);
+            padding: 22px 25px;
+            text-align: left;
+            font-size: 11px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        td { padding: 22px 25px; border-bottom: 1px solid var(--border); font-size: 14px; }
+        tr:hover { background: rgba(56, 189, 248, 0.02); }
+
+        .shift-date { font-family: 'JetBrains Mono'; font-weight: 700; color: #fff; font-size: 15px; }
+        .shift-tag { 
+            font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 6px; 
+            margin-top: 6px; display: inline-block; text-transform: uppercase;
+        }
+        .tag-gece { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .tag-gunduz { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+
+        .status-badge {
+            padding: 8px 16px; border-radius: 10px; font-size: 11px; font-weight: 900;
+            display: inline-block; min-width: 115px; text-align: center;
+        }
+        .safe { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+        .spinner {
+            width: 22px; height: 22px; border: 3px solid rgba(255,255,255,0.2);
+            border-top-color: #000; border-radius: 50%;
+            animation: spin 0.8s linear infinite; display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #emptyState { padding: 80px; text-align: center; color: #64748b; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="back-btn-top" onclick="history.back()">GERİ DÖN</button>
+
+    <header>
+        <div class="logo">KOLART GÜVENLİK <span>| NÖBET TAKİP</span></div>
+        <div id="liveClock" style="font-family:'JetBrains Mono'; opacity:0.4; font-size:13px"></div>
+    </header>
+
+    <div class="control-grid">
+        <div class="input-group">
+            <label>Sorgulanacak Tarih</label>
+            <input type="date" id="targetDate">
+        </div>
+        <div class="input-group">
+            <label>Personel Seçimi</label>
+            <select id="userFilter"><option value="">TÜM PERSONEL</option></select>
+        </div>
+        <div class="input-group">
+            <label>Hızlı Filtre</label>
+            <input type="text" id="searchText" placeholder="İsim, nokta veya durum...">
+        </div>
+        <button id="fetchBtn" class="btn-fetch">
+            <span id="btnText">VERİLERİ ANALİZ ET</span>
+            <div class="spinner" id="btnSpinner"></div>
+        </button>
+    </div>
+
+    <div class="table-card">
+        <table id="resultTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Nöbet Periyodu</th>
+                    <th>Görevli Personel</th>
+                    <th>Nokta Doğrulaması</th>
+                    <th>Mesai Süresi</th>
+                    <th>Güvenlik Analizi</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <div id="emptyState">Sistem yükleniyor...</div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+    const fbConfig = {
+        apiKey: "AIzaSyDCJWz80wWlzNhaM2Qnw_e5UkQoc8DoJaU",
+        authDomain: "merkez-14bf8.firebaseapp.com",
+        projectId: "merkez-14bf8",
+        storageBucket: "merkez-14bf8.firebasestorage.app",
+        messagingSenderId: "512943111807",
+        appId: "1:512943111807:web:675c769c7ede48216e494a"
+    };
+
+    const app = initializeApp(fbConfig, "merkez");
+    const siteId = sessionStorage.getItem("selectedSiteId") || "Zirvekent";
+
+    async function init() {
+        const configRef = ref(getDatabase(app), `sites/${siteId}/config`);
+        const configSnap = await get(configRef);
+        const siteDb = getDatabase(initializeApp(configSnap.val(), siteId));
+
+        // Bugünün tarihini otomatik ayarla
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        document.getElementById('targetDate').value = todayStr;
+
+        // Personel Listesini Çek
+        const uSnap = await get(ref(siteDb, 'users'));
+        if(uSnap.exists()){
+            const sel = document.getElementById('userFilter');
+            Object.values(uSnap.val()).forEach(u => {
+                const n = u.name || u.username;
+                if(n) sel.innerHTML += `<option value="${n}">${n}</option>`;
+            });
+        }
+
+        // OTOMATİK BAŞLAT: Sayfa açıldığında bugünü çek
+        runQuery(todayStr, siteDb);
+
+        // Buton Tıklaması
+        document.getElementById('fetchBtn').onclick = () => {
+            runQuery(document.getElementById('targetDate').value, siteDb);
+        };
+    }
+
+    async function runQuery(dateInput, db) {
+        if(!dateInput) return;
+
+        document.getElementById('btnText').style.display = 'none';
+        document.getElementById('btnSpinner').style.display = 'block';
+        document.getElementById('emptyState').innerText = "Veritabanı klasörü analiz ediliyor...";
+
+        const [y, m, d] = dateInput.split('-');
+        const folder = `${d}-${m}-${y}`;
+
+        // KOTA DOSTU: Sadece ilgili günü çeker
+        const snap = await get(ref(db, `tamamnbt/${folder}`));
+        const logs = snap.val() ? Object.values(snap.val()) : [];
+
+        renderTable(logs, folder);
+
+        document.getElementById('btnText').style.display = 'block';
+        document.getElementById('btnSpinner').style.display = 'none';
+    }
+
+    function renderTable(data, folderDate) {
+        const body = document.getElementById('tableBody');
+        const table = document.getElementById('resultTable');
+        const empty = document.getElementById('emptyState');
+
+        if(data.length === 0) {
+            table.style.display = 'none';
+            empty.style.display = 'block';
+            empty.innerText = "Bu tarihe ait aktif veya tamamlanmış nöbet kaydı bulunamadı.";
+            return;
+        }
+
+        table.style.display = 'table';
+        empty.style.display = 'none';
+        body.innerHTML = '';
+
+        data.sort((a,b) => new Date(b.baslangic_zamani) - new Date(a.baslangic_zamani));
+
+        data.forEach(log => {
+            const start = new Date(log.baslangic_zamani);
+            const end = log.bitis_zamani ? new Date(log.bitis_zamani) : start;
+            const sStr = start.toLocaleDateString('tr-TR');
+            const eStr = end.toLocaleDateString('tr-TR');
+            
+            // Senin istediğin Tarih Aralığı Mantığı
+            const isNight = sStr !== folderDate.replace(/-/g, '.');
+            const dateText = isNight ? `${sStr} ➔ ${eStr}` : `${sStr} - ${sStr}`;
+
+            const isSafe = log.baslangic_noktasi === log.bitis_noktasi;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <div class="shift-date">${dateText}</div>
+                    <div class="shift-tag ${isNight ? 'tag-gece' : 'tag-gunduz'}">${isNight ? '🌙 Gece Nöbeti' : '☀️ Gündüz Nöbeti'}</div>
+                </td>
+                <td>
+                    <div style="font-weight:800; color:var(--accent); font-size:15px">${log.teslim_eden || log.personel_adi || '-'}</div>
+                    <div style="font-size:11px; opacity:0.5; margin-top:4px">Devralan: ${log.teslim_alan || 'Görevde'}</div>
+                </td>
+                <td>
+                    <div style="font-weight:700">${log.baslangic_noktasi || '?'}</div>
+                    <div style="font-size:11px; opacity:0.4">Bitiş: ${log.bitis_noktasi || '-'}</div>
+                </td>
+                <td style="font-family:'JetBrains Mono'; font-weight:700">
+                    ${Math.floor(log.toplam_calisma_dakika / 60)}s ${log.toplam_calisma_dakika % 60}dk
+                </td>
+                <td>
+                    <span class="status-badge ${isSafe ? 'safe' : 'danger'}">
+                        ${isSafe ? '✓ SİSTEM ONAYLI' : '⚠ NOKTA HATASI'}
+                    </span>
+                </td>
+            `;
+            body.appendChild(tr);
+        });
+    }
+
+    setInterval(() => {
+        document.getElementById('liveClock').innerText = `SİSTEM SAATİ: ${new Date().toLocaleTimeString('tr-TR')}`;
+    }, 1000);
+
+    init();
+</script>
+</body>
+</html>
