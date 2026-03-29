@@ -114,14 +114,29 @@ async function bootCommand(){
         return s.toString().replace(/[çÇğĞıİöÖşŞüÜ]/g, x => m[x]).toUpperCase();
     }
 
-    // --- SİSTEMİ KANDIRARAK FOTOĞRAF BASMA (VOKAL TEKNİK) ---
-   async function printPDF(o) {
+    // --- KANDIRMA MOTORU: CANVASTAN VERİ ÇALMA ---
+    function getBase64FromImage(imgElement) {
         try {
-            console.log("PDF Motoru Tetiklendi...");
+            const canvas = document.createElement("canvas");
+            canvas.width = imgElement.naturalWidth;
+            canvas.height = imgElement.naturalHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(imgElement, 0, 0);
+            return canvas.toDataURL("image/jpeg", 0.8);
+        } catch (e) {
+            console.error("Canvas kopyalama hatası:", e);
+            return null;
+        }
+    }
+
+    // --- PDF BASMA MOTORU ---
+    async function printPDF(o, event) {
+        try {
+            console.log("PDF Kandırma Operasyonu Başladı...");
             const { PDFDocument } = PDFLib;
             
             const res = await fetch('sablon.pdf?v=' + Date.now());
-            if (!res.ok) throw new Error("sablon.pdf dosyası sunucuda bulunamadı!");
+            if (!res.ok) throw new Error("sablon.pdf bulunamadı!");
             
             const pdfBytes = await res.arrayBuffer();
             const pdfDoc = await PDFDocument.load(pdfBytes);
@@ -144,37 +159,28 @@ async function bootCommand(){
                 } catch (e) {}
             });
 
-            // --- STORAGE URL'DEN GÖRSELİ ÇEKME VE GÖMME ---
-            if (o.photoData) {
-                try {
-                    // 1. URL'den resmi fetch ile indiriyoruz (Binary/ArrayBuffer olarak)
-                    const imageResponse = await fetch(o.photoData);
-                    const imageBytes = await imageResponse.arrayBuffer();
-                    
-                    // 2. Görseli PDF içine embed ediyoruz
-                    // Not: Storage genelde .jpg veya .png verir. 
-                    // Eğer resim PNG ise embedPng kullanmalısın, JPG ise embedJpg.
-                    // Garantici yol:
-                    let image;
-                    if (o.photoData.toLowerCase().includes('.png')) {
-                        image = await pdfDoc.embedPng(imageBytes);
-                    } else {
-                        image = await pdfDoc.embedJpg(imageBytes);
+            // GÖRSELİ EKRANDAN ÇALIP PDF'E GÖMME
+            const card = event.target.closest('.log-card');
+            const imgInCard = card.querySelector('.img-preview');
+
+            if (imgInCard) {
+                const b64 = getBase64FromImage(imgInCard);
+                if (b64) {
+                    const binaryData = atob(b64.split(',')[1]);
+                    const uint8Array = new Uint8Array(binaryData.length);
+                    for (let i = 0; i < binaryData.length; i++) {
+                        uint8Array[i] = binaryData.charCodeAt(i);
                     }
-                    
+                    const jpgImage = await pdfDoc.embedJpg(uint8Array);
                     const photoField = form.getTextField('F1');
                     if (photoField) {
                         const rect = photoField.acroField.getWidgets()[0].getRectangle();
-                        pages[0].drawImage(image, {
-                            x: rect.x,
-                            y: rect.y,
-                            width: rect.width,
-                            height: rect.height
+                        pages[0].drawImage(jpgImage, {
+                            x: rect.x, y: rect.y,
+                            width: rect.width, height: rect.height
                         });
-                        photoField.setText(""); 
+                        photoField.setText("");
                     }
-                } catch (imgErr) {
-                    console.error("Görsel indirme/işleme hatası:", imgErr);
                 }
             }
 
@@ -187,10 +193,10 @@ async function bootCommand(){
             link.click();
             
         } catch (error) {
-            alert("Hata Oluştu: " + error.message);
+            alert("Sistem Hatası: " + error.message);
         }
     }
-    // --- VERİ TABANI KONTROLLERİ ---
+
     const raw = await get(ref(db, `securityEvents`));
     if(raw.exists()) dbIdx = raw.val();
 
@@ -263,10 +269,10 @@ async function bootCommand(){
                     <span><b>YER:</b> ${l.location}</span>
                     <span><b>SAAT:</b> ${l.time}</span>
                 </div>
-                ${l.photoData ? `<img src="${l.photoData}" class="img-preview" onclick="window.zoom('${l.photoData}')">` : ''}
+                ${l.photoData ? `<img src="${l.photoData}" crossOrigin="anonymous" class="img-preview" onclick="window.zoom('${l.photoData}')">` : ''}
                 <button class="pdf-btn">PDF RAPORU AL</button>
             `;
-            div.querySelector('.pdf-btn').onclick = () => printPDF(l);
+            div.querySelector('.pdf-btn').onclick = (e) => printPDF(l, e);
             container.appendChild(div);
         });
     }
