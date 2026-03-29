@@ -114,25 +114,24 @@ async function bootCommand(){
         return s.toString().replace(/[çÇğĞıİöÖşŞüÜ]/g, x => m[x]).toUpperCase();
     }
 
-    // --- KANDIRMA MOTORU: CANVASTAN VERİ ÇALMA ---
-    function getBase64FromImage(imgElement) {
+    // --- YEREL KANDIRMA MOTORU (BLOB TO BUFFER) ---
+    async function getSafeBuffer(url) {
         try {
-            const canvas = document.createElement("canvas");
-            canvas.width = imgElement.naturalWidth;
-            canvas.height = imgElement.naturalHeight;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(imgElement, 0, 0);
-            return canvas.toDataURL("image/jpeg", 0.8);
+            // Sunucuyu kandırmak için 'cache' olayını bypass ediyoruz
+            const response = await fetch(url, { mode: 'cors' });
+            if (!response.ok) throw new Error("Görsel sunucudan alınamadı");
+            const blob = await response.blob();
+            return await blob.arrayBuffer();
         } catch (e) {
-            console.error("Canvas kopyalama hatası:", e);
+            console.error("Yerel kandırma hatası:", e);
             return null;
         }
     }
 
     // --- PDF BASMA MOTORU ---
-    async function printPDF(o, event) {
+    async function printPDF(o) {
         try {
-            console.log("PDF Kandırma Operasyonu Başladı...");
+            console.log("PDF Motoru: Yerel Kandırma Devrede...");
             const { PDFDocument } = PDFLib;
             
             const res = await fetch('sablon.pdf?v=' + Date.now());
@@ -159,19 +158,18 @@ async function bootCommand(){
                 } catch (e) {}
             });
 
-            // GÖRSELİ EKRANDAN ÇALIP PDF'E GÖMME
-            const card = event.target.closest('.log-card');
-            const imgInCard = card.querySelector('.img-preview');
-
-            if (imgInCard) {
-                const b64 = getBase64FromImage(imgInCard);
-                if (b64) {
-                    const binaryData = atob(b64.split(',')[1]);
-                    const uint8Array = new Uint8Array(binaryData.length);
-                    for (let i = 0; i < binaryData.length; i++) {
-                        uint8Array[i] = binaryData.charCodeAt(i);
+            // GÖRSELİ YERELDEN ALIP GÖMME
+            if (o.photoData) {
+                const imgBuffer = await getSafeBuffer(o.photoData);
+                if (imgBuffer && imgBuffer.byteLength > 0) {
+                    let jpgImage;
+                    // PNG/JPG ayrımı yaparak gömme
+                    if (o.photoData.toLowerCase().includes(".png")) {
+                        jpgImage = await pdfDoc.embedPng(imgBuffer);
+                    } else {
+                        jpgImage = await pdfDoc.embedJpg(imgBuffer);
                     }
-                    const jpgImage = await pdfDoc.embedJpg(uint8Array);
+
                     const photoField = form.getTextField('F1');
                     if (photoField) {
                         const rect = photoField.acroField.getWidgets()[0].getRectangle();
@@ -186,14 +184,14 @@ async function bootCommand(){
 
             form.flatten();
             const finalPdf = await pdfDoc.save();
-            const blob = new Blob([finalPdf], { type: 'application/pdf' });
+            const downloadBlob = new Blob([finalPdf], { type: 'application/pdf' });
             const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
+            link.href = URL.createObjectURL(downloadBlob);
             link.download = `CGA_${o.raporNo}.pdf`;
             link.click();
             
         } catch (error) {
-            alert("Sistem Hatası: " + error.message);
+            alert("Sistem Hatası (DataView Sorunu): " + error.message);
         }
     }
 
@@ -272,7 +270,7 @@ async function bootCommand(){
                 ${l.photoData ? `<img src="${l.photoData}" crossOrigin="anonymous" class="img-preview" onclick="window.zoom('${l.photoData}')">` : ''}
                 <button class="pdf-btn">PDF RAPORU AL</button>
             `;
-            div.querySelector('.pdf-btn').onclick = (e) => printPDF(l, e);
+            div.querySelector('.pdf-btn').onclick = () => printPDF(l);
             container.appendChild(div);
         });
     }
