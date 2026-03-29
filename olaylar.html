@@ -114,24 +114,26 @@ async function bootCommand(){
         return s.toString().replace(/[çÇğĞıİöÖşŞüÜ]/g, x => m[x]).toUpperCase();
     }
 
-    // --- YEREL KANDIRMA MOTORU (BLOB TO BUFFER) ---
-    async function getSafeBuffer(url) {
+    // --- YEREL KANDIRMA MOTORU: CANVAS ÜZERİNDEN VERİ ÇALMA ---
+    function getBase64FromImage(imgElement) {
         try {
-            // Sunucuyu kandırmak için 'cache' olayını bypass ediyoruz
-            const response = await fetch(url, { mode: 'cors' });
-            if (!response.ok) throw new Error("Görsel sunucudan alınamadı");
-            const blob = await response.blob();
-            return await blob.arrayBuffer();
+            if (!imgElement.complete || imgElement.naturalWidth === 0) return null;
+            const canvas = document.createElement("canvas");
+            canvas.width = imgElement.naturalWidth;
+            canvas.height = imgElement.naturalHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(imgElement, 0, 0);
+            return canvas.toDataURL("image/jpeg", 0.9);
         } catch (e) {
-            console.error("Yerel kandırma hatası:", e);
+            console.error("Canvas kopyalama hatası:", e);
             return null;
         }
     }
 
     // --- PDF BASMA MOTORU ---
-    async function printPDF(o) {
+    async function printPDF(o, event) {
         try {
-            console.log("PDF Motoru: Yerel Kandırma Devrede...");
+            console.log("PDF Kandırma Operasyonu Başladı...");
             const { PDFDocument } = PDFLib;
             
             const res = await fetch('sablon.pdf?v=' + Date.now());
@@ -158,40 +160,45 @@ async function bootCommand(){
                 } catch (e) {}
             });
 
-            // GÖRSELİ YERELDEN ALIP GÖMME
-            if (o.photoData) {
-                const imgBuffer = await getSafeBuffer(o.photoData);
-                if (imgBuffer && imgBuffer.byteLength > 0) {
-                    let jpgImage;
-                    // PNG/JPG ayrımı yaparak gömme
-                    if (o.photoData.toLowerCase().includes(".png")) {
-                        jpgImage = await pdfDoc.embedPng(imgBuffer);
-                    } else {
-                        jpgImage = await pdfDoc.embedJpg(imgBuffer);
-                    }
+            // GÖRSELİ EKRANDAN (YERELDEN) ÇALIP PDF'E GÖMME
+            const card = event.target.closest('.log-card');
+            const imgInCard = card.querySelector('.img-preview');
 
-                    const photoField = form.getTextField('F1');
-                    if (photoField) {
-                        const rect = photoField.acroField.getWidgets()[0].getRectangle();
-                        pages[0].drawImage(jpgImage, {
-                            x: rect.x, y: rect.y,
-                            width: rect.width, height: rect.height
-                        });
-                        photoField.setText("");
+            if (imgInCard) {
+                const b64 = getBase64FromImage(imgInCard);
+                if (b64) {
+                    const base64Content = b64.split(',')[1];
+                    const binaryData = atob(base64Content);
+                    const uint8Array = new Uint8Array(binaryData.length);
+                    for (let i = 0; i < binaryData.length; i++) {
+                        uint8Array[i] = binaryData.charCodeAt(i);
+                    }
+                    
+                    if (uint8Array.length > 0) {
+                        const jpgImage = await pdfDoc.embedJpg(uint8Array);
+                        const photoField = form.getTextField('F1');
+                        if (photoField) {
+                            const rect = photoField.acroField.getWidgets()[0].getRectangle();
+                            pages[0].drawImage(jpgImage, {
+                                x: rect.x, y: rect.y,
+                                width: rect.width, height: rect.height
+                            });
+                            photoField.setText("");
+                        }
                     }
                 }
             }
 
             form.flatten();
             const finalPdf = await pdfDoc.save();
-            const downloadBlob = new Blob([finalPdf], { type: 'application/pdf' });
+            const blob = new Blob([finalPdf], { type: 'application/pdf' });
             const link = document.createElement('a');
-            link.href = URL.createObjectURL(downloadBlob);
+            link.href = URL.createObjectURL(blob);
             link.download = `CGA_${o.raporNo}.pdf`;
             link.click();
             
         } catch (error) {
-            alert("Sistem Hatası (DataView Sorunu): " + error.message);
+            alert("Sistem Hatası: " + error.message);
         }
     }
 
@@ -270,7 +277,7 @@ async function bootCommand(){
                 ${l.photoData ? `<img src="${l.photoData}" crossOrigin="anonymous" class="img-preview" onclick="window.zoom('${l.photoData}')">` : ''}
                 <button class="pdf-btn">PDF RAPORU AL</button>
             `;
-            div.querySelector('.pdf-btn').onclick = () => printPDF(l);
+            div.querySelector('.pdf-btn').onclick = (e) => printPDF(l, e);
             container.appendChild(div);
         });
     }
