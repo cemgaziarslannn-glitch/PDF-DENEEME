@@ -1,98 +1,89 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CGA | BLACK OPS COMMAND</title>
-<link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGA | BLACK OPS COMMAND</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
-<style>
-    :root { 
-        --bg-deep: #08090a; 
-        --panel-bg: #111214; 
-        --accent: #f59e0b; /* Amber/Gold - Ciddiyet için */
-        --text-dim: #94a3b8;
-        --text-bright: #f8fafc;
-        --border-color: #26292e;
-        --card-bg: #16181b;
-    }
+    <style>
+        :root { 
+            --bg-deep: #08090a; 
+            --panel-bg: #111214; 
+            --accent: #f59e0b; 
+            --text-dim: #94a3b8;
+            --text-bright: #f8fafc;
+            --border-color: #26292e;
+            --card-bg: #16181b;
+            --danger: #ef4444;
+        }
 
-    body { 
-        margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-deep); color: var(--text-bright); 
-        padding: 15px; -webkit-font-smoothing: antialiased;
-    }
+        body { 
+            margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-deep); color: var(--text-bright); 
+            padding: 15px; -webkit-font-smoothing: antialiased;
+        }
 
-    /* ÜST PANEL - TACTICAL LOGO */
-    .top-header { 
-        display: flex; justify-content: space-between; align-items: center; 
-        padding: 25px; background: var(--panel-bg); border: 1px solid var(--border-color); 
-        border-radius: 4px; margin-bottom: 20px;
-    }
-    .main-logo { font-family: 'Syncopate', sans-serif; font-weight: 700; letter-spacing: 6px; font-size: 1.4rem; color: #fff; }
-    .main-logo span { color: var(--accent); font-size: 0.7rem; letter-spacing: 2px; display: block; opacity: 0.6; }
+        .top-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 25px; background: var(--panel-bg); border: 1px solid var(--border-color); 
+            border-radius: 4px; margin-bottom: 20px;
+        }
+        .main-logo { font-family: 'Syncopate', sans-serif; font-weight: 700; letter-spacing: 6px; font-size: 1.4rem; color: #fff; }
+        .main-logo span { color: var(--accent); font-size: 0.7rem; letter-spacing: 2px; display: block; opacity: 0.6; }
 
-    /* TAKVİM ÜNİTESİ - DARK UI */
-    .calendar-unit { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 20px; margin-bottom: 20px; }
-    .unit-title { font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; }
-    
-    .scroll-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-    
-    .nav-btn {
-        padding: 12px 20px; background: transparent; border: 1px solid var(--border-color); color: var(--text-dim);
-        border-radius: 2px; cursor: pointer; font-size: 11px; font-weight: 700; transition: 0.2s; text-transform: uppercase;
-        font-family: 'Syncopate', sans-serif;
-    }
-    .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .nav-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        .calendar-unit { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 20px; margin-bottom: 20px; }
+        .unit-title { font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; }
+        
+        .scroll-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+        
+        .nav-btn {
+            padding: 12px 20px; background: transparent; border: 1px solid var(--border-color); color: var(--text-dim);
+            border-radius: 2px; cursor: pointer; font-size: 11px; font-weight: 700; transition: 0.2s; text-transform: uppercase;
+            font-family: 'Syncopate', sans-serif;
+        }
+        .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .nav-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
-    .day-sq { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono'; font-size: 14px; }
+        .day-sq { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono'; font-size: 14px; }
 
-    /* FİLTRELEME */
-    .filter-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-    .dark-select { 
-        background: #000; border: 1px solid var(--border-color); color: #fff; padding: 15px; 
-        border-radius: 4px; font-size: 13px; outline: none; transition: 0.2s;
-    }
-    .dark-select:focus { border-color: var(--accent); }
+        .filter-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .dark-select { 
+            background: #000; border: 1px solid var(--border-color); color: #fff; padding: 15px; 
+            border-radius: 4px; font-size: 13px; outline: none; transition: 0.2s;
+        }
 
-    /* RAPOR KARTLARI - DARK MODE */
-    .log-card { 
-        background: var(--card-bg); border: 1px solid var(--border-color); 
-        padding: 30px; margin-bottom: 15px; position: relative;
-    }
-    .log-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0.4; }
-    
-    .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .log-user { font-family: 'Syncopate'; font-size: 12px; color: #fff; }
-    .log-tag { border: 1px solid var(--accent); color: var(--accent); font-size: 9px; padding: 3px 10px; font-weight: 700; }
-    
-    .log-body { color: #cbd5e1; font-size: 15px; line-height: 1.8; margin-bottom: 25px; font-weight: 300; }
-    
-    .log-meta { display: grid; grid-template-columns: 1fr 1fr; font-size: 11px; color: var(--text-dim); border-top: 1px solid #222; padding-top: 15px; }
-    .log-meta span b { color: var(--accent); margin-right: 5px; }
+        .log-card { 
+            background: var(--card-bg); border: 1px solid var(--border-color); 
+            padding: 30px; margin-bottom: 15px; position: relative;
+        }
+        .log-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--accent); opacity: 0.4; }
+        
+        .log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .log-user { font-family: 'Syncopate'; font-size: 12px; color: #fff; }
+        .log-tag { border: 1px solid var(--accent); color: var(--accent); font-size: 9px; padding: 3px 10px; font-weight: 700; }
+        
+        .log-body { color: #cbd5e1; font-size: 15px; line-height: 1.8; margin-bottom: 25px; font-weight: 300; }
+        
+        .log-meta { display: grid; grid-template-columns: 1fr 1fr; font-size: 11px; color: var(--text-dim); border-top: 1px solid #222; padding-top: 15px; }
+        .log-meta span b { color: var(--accent); margin-right: 5px; }
 
-    .img-preview { width: 140px; border-radius: 2px; margin-top: 20px; cursor: zoom-in; opacity: 0.7; transition: 0.3s; border: 1px solid #333; }
-    .img-preview:hover { opacity: 1; border-color: var(--accent); }
+        .img-preview { width: 140px; border-radius: 2px; margin-top: 20px; cursor: zoom-in; opacity: 0.7; transition: 0.3s; border: 1px solid #333; }
+        
+        .pdf-btn { 
+            background: transparent; color: #fff; border: 1px solid #fff; padding: 15px; width: 100%; 
+            font-weight: 700; margin-top: 25px; cursor: pointer; text-transform: uppercase; font-size: 11px; 
+            font-family: 'Syncopate'; transition: 0.3s; letter-spacing: 2px;
+        }
+        .pdf-btn:hover { background: #fff; color: #000; }
 
-    .pdf-btn { 
-        background: transparent; color: #fff; border: 1px solid #fff; padding: 15px; width: 100%; 
-        font-weight: 700; margin-top: 25px; cursor: pointer; text-transform: uppercase; font-size: 11px; 
-        font-family: 'Syncopate'; transition: 0.3s; letter-spacing: 2px;
-    }
-    .pdf-btn:hover { background: #fff; color: #000; }
+        #preloader { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        .bar-load { width: 50px; height: 2px; background: var(--accent); animation: pulse 1s infinite alternate; }
+        @keyframes pulse { from { width: 10px; opacity: 0.2; } to { width: 100px; opacity: 1; } }
 
-    /* SİSTEM EKRANLARI */
-    #preloader { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; align-items: center; justify-content: center; }
-    .bar-load { width: 50px; height: 2px; background: var(--accent); animation: pulse 1s infinite alternate; }
-    @keyframes pulse { from { width: 10px; opacity: 0.2; } to { width: 100px; opacity: 1; } }
-
-    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10001; justify-content: center; align-items: center; padding: 40px; }
-    .overlay img { max-width: 100%; max-height: 100%; border: 1px solid var(--accent); }
-
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-thumb { background: var(--accent); }
-</style>
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10001; justify-content: center; align-items: center; padding: 40px; }
+        .overlay img { max-width: 100%; max-height: 100%; border: 1px solid var(--accent); }
+    </style>
 </head>
 <body>
 
@@ -105,10 +96,9 @@
 </div>
 
 <div class="calendar-unit">
-    <span class="unit-title">OLAY BİLDİRİMİ YAPILAN AYLAR</span>
+    <span class="unit-title">ARŞİVLENMİŞ AYLAR</span>
     <div class="scroll-row" id="monthWrap"></div>
-    
-    <span class="unit-title">OLAY BİLDİRİMİ YAPILAN GÜNLER</span>
+    <span class="unit-title">GÜNLÜK RAPOR AKIŞI</span>
     <div class="scroll-row" id="dayWrap"></div>
 </div>
 
@@ -159,7 +149,7 @@ async function bootCommand(){
     let activeRef = null;
     let dataList = [];
 
-    // --- PDF ENGINE (TOUCHLESS) ---
+    // --- HATASIZ PDF MOTORU ---
     function fixT(s) {
         if (!s) return "";
         const m = {'ç':'c','Ç':'C','ğ':'g','Ğ':'G','ı':'i','İ':'I','ö':'o','Ö':'O','ş':'s','Ş':'S','ü':'u','Ü':'U'};
@@ -168,41 +158,65 @@ async function bootCommand(){
 
     async function printPDF(o) {
         try {
-            const { PDFDocument } = PDFLib;
+            console.log("PDF Hazırlanıyor...", o.raporNo);
+            const { PDFDocument } = PDFLib; // Kütüphane kontrolü
+            
             const res = await fetch('sablon.pdf?v=' + Date.now());
-            const doc = await PDFDocument.load(await res.arrayBuffer());
-            const form = doc.getForm();
-            const pages = doc.getPages();
+            if (!res.ok) throw new Error("Şablon dosyası (sablon.pdf) bulunamadı!");
+            
+            const existingPdfBytes = await res.arrayBuffer();
+            const pdfDoc = await PDFDocument.load(existingPdfBytes);
+            const form = pdfDoc.getForm();
+            const pages = pdfDoc.getPages();
 
-            const map = {
+            const fieldMap = {
                 'P1': o.raporNo, 'Z1': o.raporNo, 'SIRA': o.raporNo,
                 'P2': o.date, 'Z3': o.date,
-                'G1': o.location, 'T1': o.tespitYeri,
+                'G1': o.location, 'T1': o.tespitYeri || o.location,
                 'T2': o.konu, 'T4': o.time,
                 'A1': o.user, 'A3': "GUVENLIK GOREVLISI",
                 'Y1': o.desc
             };
 
-            Object.entries(map).forEach(([k, v]) => { try { form.getTextField(k).setText(fixT(v)); } catch(e){} });
+            // Yazı alanlarını doldur
+            Object.entries(fieldMap).forEach(([key, val]) => {
+                try {
+                    const field = form.getTextField(key);
+                    if (field) field.setText(fixT(val));
+                } catch (err) { /* Alan yoksa geç */ }
+            });
 
-            if (o.photoData) {
-                const imgB = await fetch(o.photoData).then(r => r.arrayBuffer());
-                const jpg = await doc.embedJpg(imgB);
-                const rect = form.getTextField('F1').acroField.getWidgets()[0].getRectangle();
-                pages[0].drawImage(jpg, { x: rect.x, y: rect.y, width: rect.width, height: rect.height });
-                form.getTextField('F1').setText("");
+            // Fotoğraf ekle
+            if (o.photoData && o.photoData.includes("base64")) {
+                try {
+                    const imageBytes = await fetch(o.photoData).then(r => r.arrayBuffer());
+                    const jpgImage = await pdfDoc.embedJpg(imageBytes);
+                    const photoField = form.getTextField('F1');
+                    if (photoField) {
+                        const rect = photoField.acroField.getWidgets()[0].getRectangle();
+                        pages[0].drawImage(jpgImage, {
+                            x: rect.x, y: rect.y,
+                            width: rect.width, height: rect.height
+                        });
+                        photoField.setText(""); // F1 yazısını temizle
+                    }
+                } catch (imgErr) { console.error("Fotoğraf eklenemedi:", imgErr); }
             }
 
             form.flatten();
-            const final = await doc.save();
+            const pdfBytes = await pdfDoc.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const link = document.createElement('a');
-            link.href = URL.createObjectURL(new Blob([final], { type: 'application/pdf' }));
-            link.download = `CGA_${o.raporNo}.pdf`;
+            link.href = URL.createObjectURL(blob);
+            link.download = `RAPOR_${o.raporNo || 'CGA'}.pdf`;
             link.click();
-        } catch(e) { alert("PDF Error"); }
+        } catch (error) {
+            console.error(error);
+            alert("PDF HATASI: " + error.message);
+        }
     }
 
-    // --- LOGIC ---
+    // --- VERİ ÇEKME MANTIĞI ---
     const raw = await get(ref(db, `securityEvents`));
     if(raw.exists()) dbIdx = raw.val();
 
@@ -250,49 +264,54 @@ async function bootCommand(){
             dataList = [];
             if(s.exists()){
                 const d = s.val();
-                for(let u in d) for(let k in d[u]) dataList.push({...d[u][k], user: u, key: k});
+                for(let u in d) {
+                    for(let k in d[u]) dataList.push({...d[u][k], user: u, key: k});
+                }
             }
-            const curr = uS.value;
-            uS.innerHTML = '<option value="">PERSONEL FİLTRESİ</option>' + [...new Set(dataList.map(x => x.user))].map(u => `<option value="${u}">${u}</option>`).join('');
-            uS.value = curr;
-            draw();
+            const currentU = uS.value;
+            uS.innerHTML = '<option value="">PERSONEL SEÇ</option>' + [...new Set(dataList.map(x => x.user))].map(u => `<option value="${u}">${u}</option>`).join('');
+            uS.value = currentU;
+            drawUI();
         });
     }
 
-    function draw() {
+    function drawUI() {
         container.innerHTML = '';
-        let fil = dataList.filter(l => (!uS.value || l.user === uS.value) && (!tS.value || l.konu === tS.value));
+        let filtered = dataList.filter(l => (!uS.value || l.user === uS.value) && (!tS.value || l.konu === tS.value));
 
-        if(fil.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:100px; color:var(--text-dim); font-size:11px;">[ VERİ YOK ]</div>';
+        if(filtered.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:80px; color:var(--text-dim); font-size:11px;">[ KAYIT BULUNAMADI ]</div>';
             return;
         }
 
-        fil.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).forEach(l => {
-            const c = document.createElement('div');
-            c.className = 'log-card';
-            c.innerHTML = `
+        filtered.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0)).forEach(l => {
+            const card = document.createElement('div');
+            card.className = 'log-card';
+            card.innerHTML = `
                 <div class="log-header">
                     <span class="log-user">${l.user}</span>
                     <span class="log-tag">${l.konu.toUpperCase()}</span>
                 </div>
                 <div class="log-body">${l.desc}</div>
                 <div class="log-meta">
-                    <span><b>GÖREV YERİ:</b> ${l.location}</span>
-                    <span><b>RAPOR SAAT:</b> ${l.time}</span>
+                    <span><b>YER:</b> ${l.location}</span>
+                    <span><b>SAAT:</b> ${l.time}</span>
                 </div>
                 ${l.photoData ? `<img src="${l.photoData}" class="img-preview" onclick="window.zoom('${l.photoData}')">` : ''}
-                <button class="pdf-btn">PDF OLUŞTUR</button>
+                <button class="pdf-btn">SİSTEM RAPORU (PDF)</button>
             `;
-            c.querySelector('.pdf-btn').onclick = () => printPDF(l);
-            container.appendChild(c);
+            card.querySelector('.pdf-btn').onclick = () => printPDF(l);
+            container.appendChild(card);
         });
     }
 
-    window.zoom = (u) => { document.getElementById('zoomImg').src = u; document.getElementById('zoomBox').style.display = 'flex'; };
+    window.zoom = (url) => { 
+        document.getElementById('zoomImg').src = url; 
+        document.getElementById('zoomBox').style.display = 'flex'; 
+    };
     document.getElementById('zoomBox').onclick = () => document.getElementById('zoomBox').style.display = 'none';
-    uS.onchange = draw;
-    tS.onchange = draw;
+    uS.onchange = drawUI;
+    tS.onchange = drawUI;
 }
 
 bootCommand();
