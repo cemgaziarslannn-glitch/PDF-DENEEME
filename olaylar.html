@@ -115,7 +115,7 @@ async function bootCommand(){
     }
 
     // --- SİSTEMİ KANDIRARAK FOTOĞRAF BASMA (VOKAL TEKNİK) ---
-    async function printPDF(o) {
+   async function printPDF(o) {
         try {
             console.log("PDF Motoru Tetiklendi...");
             const { PDFDocument } = PDFLib;
@@ -144,34 +144,37 @@ async function bootCommand(){
                 } catch (e) {}
             });
 
-            // FOTOĞRAFI "KANDIRARAK" GÖMME KISMI
+            // --- STORAGE URL'DEN GÖRSELİ ÇEKME VE GÖMME ---
             if (o.photoData) {
                 try {
-                    // 1. Base64'ü Binary veriye çeviriyoruz
-                    const base64Content = o.photoData.split(',')[1];
-                    const binaryData = atob(base64Content);
-                    const uint8Array = new Uint8Array(binaryData.length);
-                    for (let i = 0; i < binaryData.length; i++) {
-                        uint8Array[i] = binaryData.charCodeAt(i);
-                    }
-
-                    // 2. Veriyi embed ediyoruz (EmbedJpg hem JPG hem PNG (bazı durumlarda) destekler)
-                    const jpgImage = await pdfDoc.embedJpg(uint8Array);
+                    // 1. URL'den resmi fetch ile indiriyoruz (Binary/ArrayBuffer olarak)
+                    const imageResponse = await fetch(o.photoData);
+                    const imageBytes = await imageResponse.arrayBuffer();
                     
-                    // 3. F1 alanının koordinatlarını alıyoruz
+                    // 2. Görseli PDF içine embed ediyoruz
+                    // Not: Storage genelde .jpg veya .png verir. 
+                    // Eğer resim PNG ise embedPng kullanmalısın, JPG ise embedJpg.
+                    // Garantici yol:
+                    let image;
+                    if (o.photoData.toLowerCase().includes('.png')) {
+                        image = await pdfDoc.embedPng(imageBytes);
+                    } else {
+                        image = await pdfDoc.embedJpg(imageBytes);
+                    }
+                    
                     const photoField = form.getTextField('F1');
                     if (photoField) {
                         const rect = photoField.acroField.getWidgets()[0].getRectangle();
-                        pages[0].drawImage(jpgImage, {
+                        pages[0].drawImage(image, {
                             x: rect.x,
                             y: rect.y,
                             width: rect.width,
                             height: rect.height
                         });
-                        photoField.setText(""); // Üstündeki "F1" yazısını sil
+                        photoField.setText(""); 
                     }
                 } catch (imgErr) {
-                    console.error("Görsel işleme hatası:", imgErr);
+                    console.error("Görsel indirme/işleme hatası:", imgErr);
                 }
             }
 
@@ -187,7 +190,6 @@ async function bootCommand(){
             alert("Hata Oluştu: " + error.message);
         }
     }
-
     // --- VERİ TABANI KONTROLLERİ ---
     const raw = await get(ref(db, `securityEvents`));
     if(raw.exists()) dbIdx = raw.val();
