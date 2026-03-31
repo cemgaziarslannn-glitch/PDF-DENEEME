@@ -3,219 +3,865 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0b1a27">
-<link rel="manifest" href="manifest.json">
-
 <title>CGA Güvenlik Sistemleri - Giriş Paneli</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="qr Devriye">
+
+<link rel="apple-touch-icon" sizes="57x57" href="apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icon-120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+
+<meta name="msapplication-TileColor" content="#0a1a2e">
+<meta name="msapplication-TileImage" content="ms-icon-144x144.png">
+<meta name="theme-color" content="#0a1a2e">
+
 <style>
 :root {
   color-scheme: dark;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* 🔴 SCROLL TAMAMEN KAPALI */
-}
-
-:root{
   --cga-bg-main: #0b1a27;
   --cga-bg-secondary: #1a2b3f;
   --cga-gold: #f1c40f;
-  --cga-gold-soft: rgba(241,196,15,0.35);
   --cga-green: #2ecc71;
   --cga-green-dark: #27ae60;
   --cga-text-main: #ecf0f1;
-  --cga-text-soft: rgba(236,240,241,0.65);
   --cga-card-bg: rgba(255,255,255,0.06);
   --cga-border-soft: rgba(255,255,255,0.12);
 }
 
-body {
-  font-family:'Montserrat',sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #0b1a27; 
-  background:
-    radial-gradient(circle at top, rgba(241,196,15,0.08), transparent 40%),
-    linear-gradient(135deg, var(--cga-bg-main), var(--cga-bg-secondary));
-  color: #ecf0f1;
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+  display: flex; justify-content: center; align-items: center;
+  background: radial-gradient(circle at top, rgba(241,196,15,0.08), transparent 40%),
+              linear-gradient(135deg, var(--cga-bg-main), var(--cga-bg-secondary));
+  color: var(--cga-text-main);
+  -webkit-touch-callout: none;
 }
 
 .container {
   width: 380px;
-  padding: 40px 30px 70px; 
+  padding: 40px 30px 70px;
   border-radius: 26px;
   background: var(--cga-card-bg);
   backdrop-filter: blur(22px);
-  box-shadow: 0 0 0 1px var(--cga-border-soft),
-              0 20px 50px rgba(0,0,0,0.7);
+  box-shadow: 0 0 0 1px var(--cga-border-soft), 0 20px 50px rgba(0,0,0,0.7);
   text-align: center;
   transform: translateY(-20px);
-  max-height: calc(100% - 20px);
-  overflow: hidden;
 }
 
-h1 {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--cga-gold);
-  text-shadow: 0 0 10px var(--cga-gold-soft), 0 0 25px rgba(241,196,15,0.25);
-  margin-bottom: 8px;
+h1 { font-size:26px; font-weight:800; color: var(--cga-gold); margin-bottom:8px; cursor:pointer; }
+
+.site-name{
+  display:none; font-size:28px; font-weight:800; letter-spacing:1px; margin:1px 0 18px;
+  color:#2ecc71; text-shadow:0 0 10px rgba(46,204,113,0.6),0 0 25px rgba(46,204,113,0.4);
+}
+
+.input-group { display:none; flex-direction:column; text-align:left; margin-bottom:28px; }
+.input-group.active { display:flex; }
+
+input[type="text"], input[type="password"] { width:100%; padding:12px; margin:8px 0; border-radius:12px; border:none; background: rgba(255,255,255,0.1); color:white; font-size:14px;}
+input::placeholder { color: rgba(236,240,241,0.6); }
+
+.remember {display:flex; align-items:center; gap:8px; font-size:14px; margin-top:8px;}
+.remember input[type="checkbox"] { cursor:pointer; }
+.remember label { cursor:pointer; color:#fff; }
+
+.loginBtn {
+  width: 150px;
+  padding: 13px;
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 0;
+  background: linear-gradient(90deg, var(--cga-green-dark), var(--cga-green));
+  box-shadow: 0 6px 20px rgba(46,204,113,0.45);
+  transition: 0.25s;
+}
+.loginBtn:hover {
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.message {
+  margin-top:15px;
+  margin-bottom:40px;
+  color:#e74c3c;
+  font-weight:600;
+  text-align:center;
+  min-height:20px;
+}
+
+.cga-logo { width:450px; max-width:80%; margin:20px auto 0; }
+/* --- YENİ NESİL ALT İMZA (FOOTER) --- */
+.corner-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 25px;
+  background: rgba(0, 0, 0, 0.3); /* Çok hafif şeffaf siyah */
+  backdrop-filter: blur(5px); /* Cam efekti */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  color: rgba(241, 196, 15, 0.7); /* Altın sarısı ama hafif şeffaf */
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  text-transform: uppercase;
+  user-select: none;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Yazının ortasında parlayan bir efekt */
+.corner-bottom span {
+  color: #f1c40f;
+  text-shadow: 0 0 8px rgba(241, 196, 15, 0.3);
+  margin: 0 4px;
+}
+.corner-top {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  font-size: 10px;
+  font-weight: 700; /* Biraz daha kalın */
+  /* KRİTİK DEĞİŞİKLİK: Gri yerine parlak altın sarısı */
+  color: var(--cga-gold); 
+  opacity: 1; /* Tam belirginlik (şeffaflık yok) */
+  text-shadow: 0 0 5px rgba(241, 196, 15, 0.4); /* Hafif parlama efekti */
+  user-select: none;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.securityText{
+  font-size:16px; font-weight:700; color: var(--cga-gold); margin-bottom:20px; cursor:pointer; text-align:center;
+  padding:8px 0; letter-spacing:0.5px; transition:0.25s;
+}
+.securityText:hover{ transform: scale(1.06); color:#f7d35e; }
+
+#qr-reader {
+  width: 95vw;
+  height: 70vh;
+  max-width: 600px;
+  max-height: 600px;
+  margin: auto;
+  border-radius: 12px;
+  background: #000;
+}
+
+.modal-content { max-width: 95%; }
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal.hidden { display: none; }
+
+.modal-box {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  width: 85%;
+  max-width: 320px;
+  text-align: center;
+  color: #fff;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
   cursor: pointer;
 }
 
-.site-name{
-  display:none;
-  font-size:28px;
-  font-weight:800;
-  letter-spacing:1px;
-  margin:1px 0 18px;
-  color:#2ecc71;
-  text-shadow: 0 0 10px rgba(46,204,113,0.6),
-               0 0 25px rgba(46,204,113,0.4);
-  animation: glowIn .6s ease;
+#cancelDisconnect { background: #555; color: #fff; }
+#confirmDisconnect { background: #e74c3c; color: #fff; }
+
+.disconnect-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+.disconnect-modal.hidden { display: none; }
+
+* { -webkit-user-select: none; -ms-user-select: none; user-select: none; }
+input, textarea {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-touch-callout: default;
+  pointer-events: auto;
 }
 
-@keyframes glowIn{
-  from{ opacity:0; transform:translateY(-6px); }
-  to{ opacity:1; transform:translateY(0); }
-}
 
-h2 { font-size: 18px; color: #ecf0f1; margin-bottom: 30px; }
-
-.role-buttons {display:flex; justify-content: space-between; margin-bottom:25px;}
-.role-buttons button {
-  width:100%;
-  padding:12px;
+.choiceBtn {
+  flex:1;
   border:none;
-  border-radius:15px;
-  cursor:pointer;
+  border-radius:10px;
   font-weight:700;
-  background: linear-gradient(90deg,#223344,#1a2633);
-  color: var(--cga-text-soft);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.35);
-  transition: 0.3s;
-}
-
-.role-buttons button.active {
-  background: linear-gradient(90deg,var(--cga-gold),#f39c12);
-  color:#111;
-  box-shadow: 0 0 18px var(--cga-gold-soft);
-}
-
-.input-group { display:flex; flex-direction:column; text-align:left; animation:fadeIn 0.4s; margin-bottom: 28px;}
-
-input[type="text"], input[type="password"] {width:100%; padding:12px; margin:8px 0; border-radius:12px; border:none; background: rgba(255,255,255,0.1); color:white; font-size: 14px;}
-input::placeholder { color: rgba(236,240,241,0.6); }
-
-.remember {display:flex; align-items:center; gap:8px; font-size: 14px; margin-top:8px;}
-.remember input[type="checkbox"] { margin:0; cursor:pointer; }
-.remember label { margin:0; cursor:pointer; color: #ffffff; }
-
-.loginBtn {
-  width:100%;
-  padding:13px;
-  margin-top:8px;
-  border:none;
-  border-radius:16px;
-  background: linear-gradient(90deg,var(--cga-green-dark),var(--cga-green));
-  color:white;
-  font-weight:700;
-  font-size:16px;
   cursor:pointer;
-  box-shadow: 0 6px 20px rgba(46,204,113,0.45);
+  background: rgba(255,255,255,0.1);
+  color:#fff;
   transition:0.25s;
-  margin-bottom: 24px;
 }
-.loginBtn:hover { background: linear-gradient(90deg,#2ecc71,#27ae60); transform:translateY(-2px); }
+.choiceBtn:hover { background: rgba(46,204,113,0.3); transform: scale(1.05); }
+.choiceBtn.active { background: linear-gradient(90deg,#2ecc71,#27ae60); color:#fff; }
 
-.message { margin-top:15px; color:#e74c3c; font-weight:600; text-align:center; min-height:20px; }
+.modal { position: fixed; inset:0; background: rgba(0,0,0,0.55); display:flex; align-items:center; justify-content:center; z-index:9999; transition:0.3s; }
+.modal.hidden { display:none; }
+.modal-box { background:#1e1e1e; border-radius:12px; color:#fff; }
 
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); align-items:center; justify-content:center; }
-.modal-content { background:#2c3e50; padding:25px; border-radius:20px; width:320px; text-align:center; }
-
-@keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
-
-.corner-info{
+#secLoginBtn {
+  width: 60%;
+  max-width: 220px;
+  padding: 14px 0;
+  margin: 20px auto 0;
+  display: block;
+  font-size: 18px;
+  border-radius: 18px;
+  box-shadow:0 6px 20px rgba(46,204,113,0.45);
+  cursor:pointer;
+  background: linear-gradient(90deg, var(--cga-green-dark), var(--cga-green));
+  color:#fff;
+  font-weight:700;
+  transition:0.25s;
+}
+#secLoginBtn:hover { background: linear-gradient(90deg,#2ecc71,#27ae60); transform: translateY(-2px) scale(1.05); }
+/* --- HAVALI DÖNEN DESTEK PANELİ --- */
+/* --- HAVALI DÖNEN DESTEK PANELİ (TAMİR EDİLDİ) --- */
+.support-wrapper {
   position: fixed;
-  bottom: 12px;
-  right: 14px;
-  text-align: right;
-  font-size: 11px;
-  color: rgba(189,195,199,0.7);
-  line-height: 1.4;
-  user-select: none;
+  bottom: 30px;
+  right: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 15px;
+  /* KRİTİK: Kapsayıcı artık arkadaki giriş butonunu engellemez */
+  pointer-events: none; 
+}
+
+/* Yuvarlak Buton ve Yazı Grubu */
+.support-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(20px) scale(0) rotate(-180deg);
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* Kapalıyken tıklanamaz */
   pointer-events: none;
 }
 
-.corner-info .version{ font-size: 10px; opacity: 0.8; }
-
-.cga-logo{ width: 450px; max-width: 80%; margin: 20px auto 0; }
-
-@keyframes logoIn{
-  from{ opacity:0; transform: translateY(-8px) scale(.95); }
-  to{ opacity:1; transform: translateY(0) scale(1); }
+.support-wrapper.active .support-item {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotate(0deg);
+  /* Açıkken tıklanabilir */
+  pointer-events: auto;
 }
 
-.corner-top{ position: fixed; top: calc(env(safe-area-inset-top, 0px) + 10px); right: 14px; font-size: 10px; color: rgba(189,195,199,0.7); user-select: none; pointer-events: none; }
-.corner-bottom{ position: fixed; bottom: 12px; right: 14px; font-size: 11px; color: rgba(189,195,199,0.7); user-select: none; pointer-events: none; }
+/* Yanlardaki Açıklama Yazıları */
+.support-label {
+  background: rgba(11, 26, 39, 0.9);
+  color: #f1c40f;
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+/* Yuvarlak İkonlar */
+.support-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+  color: white;
+}
+
+.btn-whatsapp-icon { background: #25D366; }
+.btn-call-icon { background: #3498db; }
+
+/* Ana Yuvarlak Buton */
+.main-support-btn {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f1c40f, #d4ac0d);
+  color: #0b1a27;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 9px;
+  box-shadow: 0 8px 25px rgba(241, 196, 15, 0.5);
+  transition: 0.4s;
+  /* Butonun kendisine basılabilmesi şart */
+  pointer-events: auto;
+}
+
+.main-support-btn span.emoji { font-size: 24px; margin-bottom: -2px; }
+
+/* Aktifken Kırmızı X Olma ve Dönme */
+.support-wrapper.active .main-support-btn {
+  transform: rotate(135deg);
+  background: #e74c3c;
+  color: #fff;
+}
+
 </style>
 </head>
 <body>
 
 <div class="container">
-<img src="logo.png" class="cga-logo" alt="CGA Güvenlik Sistemleri Logo">
-<div id="siteName" class="site-name"></div>
-<h2>Giriş Paneli</h2>
+  <img src="logo.png" class="cga-logo" alt="CGA Logo">
 
-<div class="role-buttons">
-    <button id="securityBtn" class="active">ŞİRKET GİRİŞİ</button>
-</div>
+  <div id="qrButtonsWrapper" style="display:flex; gap:8px; justify-content:center; align-items:center; background: rgba(255,255,255,0.05); padding:6px 8px; border-radius:12px; max-width:300px; margin:auto;">
+    <button id="startQR" class="choiceBtn active" style="font-size:14px; padding:6px 10px;">📷 QR Kodu Okut</button>
+    <button id="enterCode" class="choiceBtn" style="font-size:14px; padding:6px 10px;">⌨️ Kod Gir</button>
+  </div>
 
-<div id="securityGroup" class="input-group active">
-    <input type="text" id="secUsername" placeholder="Kullanıcı Adı">
+  <div style="margin-top:10px; text-align:center;">
+    <div id="siteName" class="site-name" style="font-size:24px;"></div>
+    <div id="qrMessage" style="margin-top:4px; color:#f1c40f; font-size:14px;"></div>
+  </div>
+
+  <div id="codeModal" class="modal hidden">
+    <div class="modal-box" style="padding:20px; max-width:300px; text-align:center;">
+      <h3 style="margin-bottom:12px; color:#f1c40f;">Site Kodunu Gir</h3>
+      <input id="codeInput" type="text" maxlength="4" placeholder="0000" style="width:60%; padding:8px; border-radius:8px; border:none; text-align:center; font-size:16px;">
+      <div style="margin-top:16px; display:flex; gap:10px; justify-content:center;">
+        <button id="codeCancel" class="loginBtn" style="padding:6px 12px; font-size:14px;">İptal</button>
+        <button id="codeConfirm" class="loginBtn" style="padding:6px 12px; font-size:14px;">Onayla</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="qrModal" class="modal hidden">
+      <div class="modal-content">
+        <div id="qr-reader"></div>
+        <button id="closeQRModal" class="loginBtn">Kapat</button>
+      </div>
+    </div>
+
+  <div class="securityText" id="securityBtn">🔐 Güvenlik Girişi</div>
+
+  <div id="securityGroup" class="input-group active">
+    <input type="text" id="secUsername" placeholder="Ad Soyad">
     <input type="password" id="secPassword" placeholder="Şifre">
     <div class="remember">
       <input type="checkbox" id="secRemember">
       <label for="secRemember">Kullanıcıyı hatırla</label>
     </div>
     <button class="loginBtn" id="secLoginBtn">Giriş Yap</button>
-</div>
-
-<div class="message" id="message"></div>
-</div>
-
-<div class="modal" id="adminModal">
-  <div class="modal-content">
-    <h3>Yönetici Girişi</h3>
-    <input type="text" id="adminUsername" placeholder="Kullanıcı Adı">
-    <input type="password" id="adminPassword" placeholder="Şifre">
-    <button id="adminLoginBtn" class="loginBtn">Giriş Yap</button>
-    <button id="closeAdminBtn" style="background:#c0392b; margin-top:10px;">Kapat</button>
   </div>
+
+  <div class="message" id="message"></div>
 </div>
-<button id="installBtn"
-  style="position: fixed; top: 12px; left: 12px; font-size: 20px; display:none; z-index:500;">
-  📲 Uygulamayı Yükle
-</button>
+
+<div class="corner-bottom">© 2025 CGA Güvenlik Sistemleri</div>
+<div class="corner-top">v1.1.1</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
 <script type="module">
-const _0x45ac01=_0x2b16;(function(_0x321672,_0x401c92){const _0x5a35c7=_0x2b16,_0x5432a8=_0x321672();while(!![]){try{const _0x4a2cc0=-parseInt(_0x5a35c7(0x202))/0x1*(parseInt(_0x5a35c7(0x1da))/0x2)+-parseInt(_0x5a35c7(0x1bb))/0x3+parseInt(_0x5a35c7(0x1f3))/0x4*(parseInt(_0x5a35c7(0x1f1))/0x5)+parseInt(_0x5a35c7(0x1cb))/0x6+-parseInt(_0x5a35c7(0x1dd))/0x7+-parseInt(_0x5a35c7(0x1dc))/0x8+-parseInt(_0x5a35c7(0x1d8))/0x9*(-parseInt(_0x5a35c7(0x1d0))/0xa);if(_0x4a2cc0===_0x401c92)break;else _0x5432a8['push'](_0x5432a8['shift']());}catch(_0x236c3b){_0x5432a8['push'](_0x5432a8['shift']());}}}(_0x32b2,0x7eea3));const _0x1c2a45=_0x1066;function _0x32b2(){const _0x62cde8=['secRemember','href','12dtEceS','/sw.js','userChoice','load','AIzaSyAUjb4CBSZxjCTxpx8S_rGLOLDeRtDTs7U','Bağlantı\x20hatası!','675670YqAvnA','getElementById','sirket.html','2931264nilSnQ','company','textContent','https://bencga-db51b-default-rtdb.europe-west1.firebasedatabase.app','removeItem','security','2458485Zfonie','1:568702678520:web:82d3c6a98216990fa3d20d','key','value','shift','closeAdminBtn','3431076DeSbgR','exists','7416438nAwiKQ','16233885LOhYmH','3092046AMBmaw','style','toLocaleUpperCase','none','trim','20FHOAzh','securityGroup','11GbsXYt','adminPassword','beforeinstallprompt','Kullanıcı\x20bulunamadı!','secUsername','location','10679274ijsPoL','stringify','53186odYvvu','224746QEiJqK','4461744LdNNqh','4330319JKypIu','6355915cSgiBb','11690608GlxoyV','error','admin','4222652HfGWtO','yetkili.html','username','register','34611ITowQo','settings/siteName','installBtn','17962wLlEYa','prompt','116JYmYVi','mod.html','setItem','push','addEventListener','bencga-db51b.firebasestorage.app','990980VaxHrJ','querySelector','8zufZVR','click','secLoginBtn','type','checked','Kullanıcı\x20adı\x20ve\x20şifre\x20gerekli!','block','adminModal','Enter','forEach','message','Şifre\x20hatalı!','bencga-db51b','currentUser','4lzJAAZ','23nDckbt','parse','catch','47741750JvMnvY','adminLoginBtn','568702678520'];_0x32b2=function(){return _0x62cde8;};return _0x32b2();}(function(_0x3b5bbc,_0x33e366){const _0x4c5cd9=_0x2b16,_0x495ceb=_0x1066,_0x45e3d0=_0x3b5bbc();while(!![]){try{const _0x135057=-parseInt(_0x495ceb(0x145))/0x1*(parseInt(_0x495ceb(0x188))/0x2)+-parseInt(_0x495ceb(0x15c))/0x3*(-parseInt(_0x495ceb(0x179))/0x4)+-parseInt(_0x495ceb(0x178))/0x5+parseInt(_0x495ceb(0x159))/0x6*(parseInt(_0x495ceb(0x140))/0x7)+-parseInt(_0x495ceb(0x172))/0x8+-parseInt(_0x495ceb(0x183))/0x9+parseInt(_0x495ceb(0x166))/0xa*(parseInt(_0x495ceb(0x170))/0xb);if(_0x135057===_0x33e366)break;else _0x45e3d0[_0x4c5cd9(0x1ee)](_0x45e3d0[_0x4c5cd9(0x1c5)]());}catch(_0x287f9e){_0x45e3d0[_0x4c5cd9(0x1ee)](_0x45e3d0[_0x4c5cd9(0x1c5)]());}}}(_0x25dc,0xdd950));const _0x5b10c8=_0x256a;(function(_0xe4382e,_0x117dfb){const _0xf7267a=_0x2b16,_0x5f2889=_0x1066,_0x4eaf97=_0x256a,_0x327590=_0xe4382e();while(!![]){try{const _0x3c0189=-parseInt(_0x4eaf97(0x1f0))/0x1+parseInt(_0x4eaf97(0x1f8))/0x2+-parseInt(_0x4eaf97(0x1e9))/0x3+parseInt(_0x4eaf97(0x200))/0x4+-parseInt(_0x4eaf97(0x1f1))/0x5+parseInt(_0x4eaf97(0x212))/0x6+parseInt(_0x4eaf97(0x21e))/0x7;if(_0x3c0189===_0x117dfb)break;else _0x327590[_0x5f2889(0x17a)](_0x327590[_0x5f2889(0x15f)]());}catch(_0x4e0f1c){_0x327590[_0xf7267a(0x1ee)](_0x327590[_0xf7267a(0x1c5)]());}}}(_0x3def,0x9c5e3));import{initializeApp}from'https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js';function _0x1066(_0x2b4021,_0x2396e3){_0x2b4021=_0x2b4021-0x13c;const _0x45c598=_0x25dc();let _0x17bacd=_0x45c598[_0x2b4021];return _0x17bacd;}import{getDatabase,ref,get,child}from'https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js';const firebaseConfig={'apiKey':_0x1c2a45(0x158),'authDomain':_0x5b10c8(0x222),'databaseURL':_0x1c2a45(0x15b),'projectId':_0x5b10c8(0x210),'storageBucket':_0x5b10c8(0x213),'messagingSenderId':_0x5b10c8(0x1e3),'appId':_0x1c2a45(0x189),'measurementId':_0x5b10c8(0x225)},app=initializeApp(firebaseConfig),db=getDatabase(app),siteNameEl=document[_0x1c2a45(0x14e)](_0x5b10c8(0x21c)),securityBtn=document[_0x5b10c8(0x201)](_0x5b10c8(0x211)),securityGroup=document[_0x5b10c8(0x201)](_0x5b10c8(0x226)),cgaTitle=document[_0x5b10c8(0x1f4)](_0x5b10c8(0x206)),msg=document[_0x5b10c8(0x201)](_0x5b10c8(0x1eb)),adminModal=document[_0x5b10c8(0x201)](_0x5b10c8(0x21a)),secUsername=document[_0x1c2a45(0x14e)](_0x5b10c8(0x1fd)),secPassword=document[_0x5b10c8(0x201)]('secPassword'),secRemember=document[_0x5b10c8(0x201)](_0x5b10c8(0x205)),adminUsername=document[_0x5b10c8(0x201)](_0x5b10c8(0x1f9)),adminPassword=document[_0x5b10c8(0x201)](_0x5b10c8(0x21d)),adminLoginBtn=document[_0x5b10c8(0x201)](_0x1c2a45(0x171)),closeAdminBtn=document[_0x1c2a45(0x14e)](_0x5b10c8(0x1fc));let cgaClickCount=0x0;function _0x256a(_0x2dbf6c,_0x33a96a){_0x2dbf6c=_0x2dbf6c-0x1e3;const _0x5d77db=_0x3def();let _0x2c6dda=_0x5d77db[_0x2dbf6c];return _0x2c6dda;}cgaTitle[_0x5b10c8(0x1e4)](_0x1c2a45(0x13f),()=>{const _0x39e907=_0x1c2a45,_0x46435d=_0x5b10c8;cgaClickCount++,cgaClickCount>=0xa&&(adminModal[_0x39e907(0x13d)][_0x46435d(0x215)]=_0x46435d(0x20d),cgaClickCount=0x0);}),closeAdminBtn[_0x5b10c8(0x1e4)](_0x5b10c8(0x1ef),()=>adminModal[_0x1c2a45(0x13d)][_0x5b10c8(0x215)]=_0x5b10c8(0x21b)),window[_0x1c2a45(0x16c)](_0x1c2a45(0x155),()=>{const _0x3ec705=_0x2b16,_0x77fd98=_0x1c2a45,_0x264af0=_0x5b10c8,_0x498245=JSON[_0x264af0(0x1f2)](localStorage['getItem'](_0x264af0(0x1e8)));_0x498245&&(secUsername[_0x264af0(0x1e7)]=_0x498245[_0x264af0(0x203)],secPassword[_0x77fd98(0x16a)]=_0x498245[_0x264af0(0x209)],secRemember[_0x3ec705(0x1f7)]=!![]);}),[secUsername,secPassword][_0x1c2a45(0x157)](_0x5c4609=>{const _0x241ac1=_0x5b10c8;_0x5c4609[_0x241ac1(0x1e4)](_0x241ac1(0x1e5),()=>{const _0x5cb395=_0x2b16,_0xfd5b32=_0x241ac1;_0x5c4609[_0xfd5b32(0x1e7)]=_0x5c4609[_0xfd5b32(0x1e7)][_0x5cb395(0x1cd)]('tr');});});async function loginUser(_0x15642c,_0x1a2da5,_0x2ad889){const _0x9efeda=_0x2b16,_0x4d2e11=_0x1c2a45,_0x4e87d6=_0x5b10c8;_0x15642c=_0x15642c[_0x4e87d6(0x1ed)](),_0x1a2da5=_0x1a2da5[_0x4e87d6(0x1ed)](),msg[_0x4e87d6(0x1e6)]='';if(!_0x15642c||!_0x1a2da5){msg[_0x4e87d6(0x1e6)]=_0x4e87d6(0x219);return;}try{const _0x41b5c4=await get(child(ref(db),_0x9efeda(0x1e1)));if(_0x41b5c4[_0x4e87d6(0x20b)]()){const _0x3cbe4b=_0x41b5c4[_0x4d2e11(0x14a)]();if(_0x15642c===_0x3cbe4b[_0x4e87d6(0x203)]&&_0x1a2da5===_0x3cbe4b[_0x4e87d6(0x209)]){sessionStorage[_0x4e87d6(0x1f6)](_0x4e87d6(0x1ec),JSON[_0x4e87d6(0x216)]({'username':_0x15642c,'type':_0x9efeda(0x1e1)})),window[_0x4e87d6(0x20e)][_0x4e87d6(0x20f)]=_0x4e87d6(0x21f);return;}}const _0x360693=await get(child(ref(db),_0x4e87d6(0x20c)+_0x15642c));if(!_0x360693[_0x4e87d6(0x20b)]()){msg[_0x4e87d6(0x1e6)]=_0x4d2e11(0x177);return;}const _0x41a946=_0x360693[_0x4e87d6(0x204)]();if(_0x41a946[_0x4d2e11(0x187)]!==_0x1a2da5){msg[_0x4e87d6(0x1e6)]=_0x4e87d6(0x1ee);return;}sessionStorage[_0x9efeda(0x1ed)](_0x4d2e11(0x14c),JSON[_0x4d2e11(0x181)](_0x41a946));if(_0x2ad889===_0x4e87d6(0x1ff)){if(secRemember[_0x4d2e11(0x17b)])localStorage[_0x4e87d6(0x1f6)](_0x4e87d6(0x1e8),JSON[_0x4e87d6(0x216)]({'username':_0x15642c,'password':_0x1a2da5}));else localStorage[_0x4e87d6(0x1f7)](_0x4e87d6(0x1e8));if(_0x41a946[_0x9efeda(0x1f6)]===_0x4e87d6(0x1fb))window[_0x4e87d6(0x20e)][_0x4e87d6(0x20f)]=_0x9efeda(0x1ba);else{if(_0x41a946[_0x4e87d6(0x214)]===_0x4e87d6(0x1ff))window[_0x4e87d6(0x20e)][_0x4e87d6(0x20f)]=_0x4d2e11(0x13e);else _0x41a946[_0x4e87d6(0x214)]===_0x4d2e11(0x15a)?window[_0x4e87d6(0x20e)][_0x4e87d6(0x20f)]=_0x4e87d6(0x1fe):msg[_0x9efeda(0x1bd)]=_0x4e87d6(0x220);}}}catch(_0x242997){console[_0x4e87d6(0x1f3)](_0x242997),msg[_0x4e87d6(0x1e6)]=_0x4e87d6(0x1fa);}}document[_0x5b10c8(0x201)](_0x5b10c8(0x1ea))[_0x5b10c8(0x1e4)](_0x45ac01(0x1f4),()=>{const _0x1fcdde=_0x5b10c8;loginUser(secUsername[_0x1fcdde(0x1e7)],secPassword[_0x1fcdde(0x1e7)],_0x1fcdde(0x1ff));}),adminLoginBtn[_0x45ac01(0x1ef)](_0x5b10c8(0x1ef),()=>{const _0x23068c=_0x45ac01,_0x47e92b=_0x5b10c8;loginUser(adminUsername[_0x47e92b(0x1e7)],adminPassword[_0x23068c(0x1c4)],_0x23068c(0x1e1));});function _0x3def(){const _0x33e905=_0x45ac01,_0xdf9a51=_0x1c2a45,_0x59bbc7=['addEventListener','input',_0x33e905(0x1bd),_0xdf9a51(0x16a),_0xdf9a51(0x141),_0xdf9a51(0x167),_0xdf9a51(0x153),_0xdf9a51(0x175),_0x33e905(0x200),_0xdf9a51(0x18a),_0xdf9a51(0x17f),_0xdf9a51(0x13f),_0xdf9a51(0x152),_0x33e905(0x1de),_0x33e905(0x203),_0xdf9a51(0x165),_0xdf9a51(0x16b),_0xdf9a51(0x154),_0x33e905(0x1ed),_0xdf9a51(0x142),'2362692mQAnLX',_0xdf9a51(0x150),_0xdf9a51(0x144),_0xdf9a51(0x186),_0x33e905(0x1c6),_0xdf9a51(0x16d),_0x33e905(0x1e3),_0x33e905(0x1c0),_0xdf9a51(0x16f),_0xdf9a51(0x14e),_0xdf9a51(0x13d),_0xdf9a51(0x176),_0xdf9a51(0x14a),_0xdf9a51(0x14d),_0xdf9a51(0x143),_0x33e905(0x1c3),_0x33e905(0x1e7),_0xdf9a51(0x187),_0xdf9a51(0x156),_0xdf9a51(0x162),_0xdf9a51(0x147),_0xdf9a51(0x163),_0xdf9a51(0x184),_0xdf9a51(0x17e),_0x33e905(0x1ff),_0xdf9a51(0x182),_0x33e905(0x1c9),_0xdf9a51(0x168),_0xdf9a51(0x14b),_0xdf9a51(0x14f),_0xdf9a51(0x181),_0x33e905(0x1b4),_0x33e905(0x1b5),_0xdf9a51(0x173),_0xdf9a51(0x17c),_0xdf9a51(0x15e),_0xdf9a51(0x180),_0xdf9a51(0x151),_0xdf9a51(0x161),_0xdf9a51(0x174),_0xdf9a51(0x15d),_0xdf9a51(0x13c),_0xdf9a51(0x18b),_0xdf9a51(0x171),_0xdf9a51(0x149),'G-703BGXWTFN',_0xdf9a51(0x164),_0xdf9a51(0x16e),_0xdf9a51(0x148),_0xdf9a51(0x160)];return _0x3def=function(){return _0x59bbc7;},_0x3def();}function _0x2b16(_0x5d439b,_0x4d7f1f){_0x5d439b=_0x5d439b-0x1b0;const _0x32b267=_0x32b2();let _0x2b1658=_0x32b267[_0x5d439b];return _0x2b1658;}async function loadSiteName(){const _0x5c1f17=_0x1c2a45,_0x1287c=_0x5b10c8;try{const _0x1145fe=await get(child(ref(db),_0x1287c(0x208)));if(_0x1145fe[_0x1287c(0x20b)]()){const _0x397d88=_0x1145fe[_0x5c1f17(0x14a)]()[_0x1287c(0x1ed)]();_0x397d88!==''&&(siteNameEl[_0x1287c(0x1e6)]=_0x397d88,siteNameEl[_0x1287c(0x202)][_0x1287c(0x215)]=_0x1287c(0x228));}}catch(_0x1ee9a0){}}function _0x25dc(){const _0x51dd2c=_0x45ac01,_0x43f9bf=[_0x51dd2c(0x1d3),_0x51dd2c(0x1b8),_0x51dd2c(0x1f5),_0x51dd2c(0x1d4),'load','serviceWorker',_0x51dd2c(0x1fc),_0x51dd2c(0x1b6),_0x51dd2c(0x1b2),'admin',_0x51dd2c(0x1be),_0x51dd2c(0x1e6),'Yetki\x20hatalı!',_0x51dd2c(0x1ce),_0x51dd2c(0x1c5),_0x51dd2c(0x207),'1805622dnFNHr',_0x51dd2c(0x1c8),'flex',_0x51dd2c(0x1d1),_0x51dd2c(0x1e0),_0x51dd2c(0x205),_0x51dd2c(0x1c7),_0x51dd2c(0x1f0),_0x51dd2c(0x1e5),_0x51dd2c(0x1c4),_0x51dd2c(0x1f2),'addEventListener',_0x51dd2c(0x1d6),'preventDefault',_0x51dd2c(0x1e2),_0x51dd2c(0x1d2),_0x51dd2c(0x206),_0x51dd2c(0x1df),_0x51dd2c(0x1f8),_0x51dd2c(0x1ec),_0x51dd2c(0x1fd),_0x51dd2c(0x1e4),_0x51dd2c(0x1d5),_0x51dd2c(0x1c1),_0x51dd2c(0x1eb),'push',_0x51dd2c(0x1f7),_0x51dd2c(0x1fa),_0x51dd2c(0x1b3),_0x51dd2c(0x1b1),_0x51dd2c(0x1fe),'siteName',_0x51dd2c(0x1d9),'securityBtn',_0x51dd2c(0x1ca),_0x51dd2c(0x1d7),_0x51dd2c(0x1fb),_0x51dd2c(0x1bc),'password',_0x51dd2c(0x1db),_0x51dd2c(0x1c2),_0x51dd2c(0x1cf),'bencga-db51b.firebaseapp.com','keydown',_0x51dd2c(0x1cc),'guvenlik.html',_0x51dd2c(0x1f4),_0x51dd2c(0x1e9),'securityUser',_0x51dd2c(0x1bf),'.cga-logo',_0x51dd2c(0x1b7),_0x51dd2c(0x201),_0x51dd2c(0x204),'users/',_0x51dd2c(0x1f9),_0x51dd2c(0x1ea),'val',_0x51dd2c(0x1f6),_0x51dd2c(0x200),_0x51dd2c(0x1b0),_0x51dd2c(0x1b9),'display','adminUsername'];return _0x25dc=function(){return _0x43f9bf;},_0x25dc();}loadSiteName(),document[_0x1c2a45(0x16c)](_0x5b10c8(0x221),function(_0x33f66c){const _0x1b38ec=_0x1c2a45,_0x52d932=_0x5b10c8;_0x33f66c[_0x52d932(0x207)]===_0x1b38ec(0x185)&&(document[_0x52d932(0x201)](_0x52d932(0x1ea))[_0x52d932(0x1ef)](),adminModal[_0x52d932(0x202)][_0x52d932(0x215)]==='flex'&&document[_0x52d932(0x201)](_0x52d932(0x223))[_0x52d932(0x1ef)]());}),window[_0x5b10c8(0x1e4)](_0x5b10c8(0x218),()=>{const _0x4605e1=_0x45ac01,_0x22c0c1=_0x1c2a45,_0x3e1fd9=_0x5b10c8;let _0x433f25;const _0x28f7ee=document[_0x22c0c1(0x14e)](_0x4605e1(0x1e8));if(!_0x28f7ee)return;window[_0x22c0c1(0x16c)](_0x3e1fd9(0x1f5),_0x1e0822=>{const _0x1de307=_0x3e1fd9;_0x1e0822[_0x1de307(0x227)](),_0x433f25=_0x1e0822,_0x28f7ee[_0x1de307(0x202)][_0x1de307(0x215)]=_0x1de307(0x228);}),_0x28f7ee[_0x3e1fd9(0x1e4)](_0x22c0c1(0x13f),async()=>{const _0x41c210=_0x3e1fd9;_0x28f7ee[_0x41c210(0x202)][_0x41c210(0x215)]=_0x41c210(0x21b),_0x433f25&&(_0x433f25[_0x41c210(0x224)](),await _0x433f25[_0x41c210(0x217)],_0x433f25=null);}),_0x3e1fd9(0x20a)in navigator&&navigator[_0x3e1fd9(0x20a)][_0x22c0c1(0x169)](_0x22c0c1(0x17d))[_0x22c0c1(0x146)](console[_0x22c0c1(0x165)]);});
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getDatabase, ref, get, child, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+// MERKEZ FIREBASE
+const merkezConfig = {
+  apiKey: "AIzaSyDCJWz80wWlzNhaM2Qnw_e5UkQoc8DoJaU",
+  authDomain: "merkez-14bf8.firebaseapp.com",
+  databaseURL: "https://merkez-14bf8-default-rtdb.firebaseio.com", 
+  projectId: "merkez-14bf8",
+  storageBucket: "merkez-14bf8.firebasestorage.app",
+  messagingSenderId: "512943111807",
+  appId: "1:512943111807:web:675c769c7ede48216e494a",
+  measurementId: "G-BYS8FPKY7H"
+};
+const merkezApp = getApps().find(a => a.name === "[DEFAULT]") || initializeApp(merkezConfig);
+const merkezDB = getDatabase(merkezApp);
+
+// DOM
+const siteNameEl = document.getElementById("siteName");
+const securityBtn = document.getElementById("securityBtn");
+const securityGroup = document.getElementById("securityGroup");
+const msg = document.getElementById("message");
+const secUsername = document.getElementById("secUsername");
+const secPassword = document.getElementById("secPassword");
+const secRemember = document.getElementById("secRemember");
+
+const qrBtn = document.getElementById("startQR");
+const codeBtn = document.getElementById("enterCode");
+const codeModal = document.getElementById("codeModal");
+const codeInput = document.getElementById("codeInput");
+const codeCancel = document.getElementById("codeCancel");
+const codeConfirm = document.getElementById("codeConfirm");
+const qrModal = document.getElementById("qrModal");
+const closeQRModal = document.getElementById("closeQRModal");
+let qrReader = null;
+
+const modal = document.getElementById("disconnectModal");
+const cancelBtn = document.getElementById("cancelDisconnect");
+const confirmBtn = document.getElementById("confirmDisconnect");
+
+let pressTimer;
+
+// --- AUTH DÖNÜŞTÜRÜCÜ (CEM GAZİ -> cemgazi@cga.com) ---
+function formatToEmail(name) {
+    let text = name.trim().toLowerCase();
+    const mapping = {
+        'ç': 'c', 'ğ': 'g', 'ı': 'i', 'i': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u'
+    };
+    Object.keys(mapping).forEach(key => {
+        text = text.replace(new RegExp(key, 'g'), mapping[key]);
+    });
+    return text.replace(/\s+/g, '') + "@cga.com";
+}
+
+window.togglePass = (id) => {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+};
+
+async function forcePasswordChange(username, type, activeDB, reason) {
+    const modalHtml = `
+        <div id="fMod" style="position:fixed; inset:0; background:#0b1a27; z-index:100000; display:flex; align-items:center; justify-content:center; font-family:'Montserrat', sans-serif;">
+            <div style="background:rgba(255,255,255,0.06); backdrop-filter:blur(22px); padding:40px; border-radius:26px; width:90%; max-width:380px; text-align:center; border:1px solid rgba(255,255,255,0.1); box-shadow:0 20px 50px rgba(0,0,0,0.7);">
+                <h2 style="color:#f1c40f; margin-bottom:15px;">🔐 Şifre Standartı</h2>
+                <p style="color:#ecf0f1; font-size:14px; margin-bottom:25px; line-height:1.5;">${reason}</p>
+                <div style="position:relative; margin-bottom:12px;">
+                    <input type="password" id="f_p1" placeholder="Yeni Şifre (6 Hane)" maxlength="6" style="width:100%; padding:15px; border-radius:12px; border:none; background:rgba(255,255,255,0.1); color:white; text-align:center; font-size:18px;">
+                    <button type="button" onclick="togglePass('f_p1')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#f1c40f; cursor:pointer; font-size:20px;">🙈</button>
+                </div>
+                <div style="position:relative; margin-bottom:12px;">
+                    <input type="password" id="f_p2" placeholder="Şifre Tekrar" maxlength="6" style="width:100%; padding:15px; border-radius:12px; border:none; background:rgba(255,255,255,0.1); color:white; text-align:center; font-size:18px;">
+                    <button type="button" onclick="togglePass('f_p2')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#f1c40f; cursor:pointer; font-size:20px;">🙈</button>
+                </div>
+                <div id="f_err" style="color:#e74c3c; font-weight:600; font-size:13px; margin-bottom:20px; min-height:18px;"></div>
+                <button id="f_btn" style="width:100%; padding:15px; border-radius:16px; background:linear-gradient(90deg, #27ae60, #2ecc71); color:white; font-weight:800; border:none; cursor:pointer;">GÜNCELLE VE GİRİŞ YAP</button>
+            </div>
+        </div>`;
+    document.body.insertAdjacentHTML('afterbegin', modalHtml);
+
+    document.getElementById('f_btn').onclick = async function() {
+        const p1 = document.getElementById('f_p1').value.trim();
+        const p2 = document.getElementById('f_p2').value.trim();
+        const err = document.getElementById('f_err');
+
+        if(p1.length !== 6) { err.innerText = "ŞİFRE 6 HANELİ OLMALI!"; return; }
+        if(p1 !== p2) { err.innerText = "ŞİFRELER UYUŞMUYOR!"; return; }
+        if(p1 === "1234") { err.innerText = "LÜTFEN BAŞKA BİR ŞİFRE SEÇİN!"; return; }
+
+        this.disabled = true; this.innerText = "GÜNCELLENİYOR...";
+
+        try {
+            await update(ref(activeDB, 'users/' + username), { password: p1 });
+            const stored = localStorage.getItem("securityUser");
+            if (stored && JSON.parse(stored).username === username) {
+                localStorage.setItem("securityUser", JSON.stringify({ username, password: p1 }));
+            }
+            sessionStorage.setItem("currentUser", JSON.stringify({username, type}));
+            window.location.href = type === "company" ? "sirket.html" : (type === "security" ? "guvenlik.html" : "yetkili.html");
+        } catch (e) { err.innerText = "BAĞLANTI HATASI!"; this.disabled = false; this.innerText = "GÜNCELLE VE GİRİŞ YAP"; }
+    };
+}
+
+function hideQRButtons(){
+  qrBtn.style.display="none";
+  codeBtn.style.display="none";
+  document.getElementById("qrButtonsWrapper").style.display = "none"; 
+}
+
+function showQRButtons(){
+  qrBtn.style.display="flex";
+  codeBtn.style.display="flex";
+  document.getElementById("qrButtonsWrapper").style.display = "flex"; 
+}
+
+window.addEventListener("load", async ()=>{
+  securityBtn.click();
+  const secStored = JSON.parse(localStorage.getItem("securityUser"));
+  if(secStored){ 
+    secUsername.value = secStored.username; 
+    secPassword.value = secStored.password; 
+    secRemember.checked = true; 
+  }
+
+  const savedSiteID = localStorage.getItem("siteID");
+  const savedConfig = localStorage.getItem("siteConfig");
+  if(savedSiteID && savedConfig){
+    const siteConfig = JSON.parse(savedConfig);
+    let siteApp = getApps().find(a=>a.name==`siteApp-${savedSiteID}`);
+    if(!siteApp) siteApp = initializeApp(siteConfig, `siteApp-${savedSiteID}`);
+    const siteDB = getDatabase(siteApp);
+    hideQRButtons();
+    await loadSiteName(siteDB);
+  }
+});
+
+// LOGIN (GÜNCELLENMİŞ AUTH KONTROLLÜ)
+// LOGIN (OTOMATİK AUTH OLUŞTURMA VE DB MÜHÜRLEME DESTEKLİ)
+async function loginUser(rawUsername, password, role){
+    const cleanUsername = rawUsername.trim();
+    const cleanPassword = password.trim();
+    const dbUsername = cleanUsername.toLocaleUpperCase('tr-TR');
+    const loginBtn = document.getElementById("secLoginBtn"); 
+    
+    msg.textContent = "";
+    msg.style.color = "#f1c40f";
+
+    const siteConfig = localStorage.getItem("siteConfig") ? JSON.parse(localStorage.getItem("siteConfig")) : null;
+    if(!siteConfig){ msg.textContent="Lütfen QR kodu okutunuz!"; msg.style.color="#e74c3c"; return; }
+    if(!cleanUsername || !cleanPassword){ msg.textContent="Ad Soyad ve şifre gerekli!"; msg.style.color="#e74c3c"; return; }
+
+    loginBtn.disabled = true; 
+    loginBtn.style.opacity = "0.7";
+    msg.textContent = "⌛ Bilgiler doğrulanıyor...";
+
+    try {
+        const siteId = localStorage.getItem("siteID");
+        let app = getApps().find(a=>a.name==`siteApp-${siteId}`);
+        if(!app) app=initializeApp(siteConfig,`siteApp-${siteId}`);
+        
+        const activeDB = getDatabase(app);
+        const auth = getAuth(app);
+        const targetEmail = formatToEmail(cleanUsername);
+
+        // --- 1. ADIM: ÖNCE VERİTABANINDAN KONTROL (AUTH'U KALDIRDIK) ---
+        const userSnap = await get(child(ref(activeDB),'users/'+dbUsername));
+        
+        if(!userSnap.exists()){ 
+            msg.style.color = "#e74c3c";
+            msg.textContent="Kullanıcı veritabanında bulunamadı!"; 
+            loginBtn.disabled = false; loginBtn.style.opacity = "1";
+            return; 
+        }
+
+        const user = userSnap.val();
+
+        // Şifre Kontrolü (DB üzerindeki şifre ile eşleşme)
+        if(String(user.password).trim() !== cleanPassword){
+            msg.style.color = "#e74c3c";
+            msg.textContent="Hatalı şifre!"; 
+            loginBtn.disabled = false; loginBtn.style.opacity = "1";
+            return;
+        }
+
+        if (user.isActive === false) {
+            msg.style.color = "#e74c3c";
+            msg.textContent = "Hesabınız pasif durumdadır!";
+            loginBtn.disabled = false; loginBtn.style.opacity = "1";
+            return;
+        }
+
+        // --- 2. ADIM: OTOMATİK AUTH OLUŞTURMA VE MÜHÜRLEME ---
+        // Eğer DB'de email yoksa veya Auth kaydı gerekiyorsa
+        try {
+            // Mevcut Auth ile giriş denemesi yap
+            await signInWithEmailAndPassword(auth, targetEmail, cleanPassword);
+        } catch (authErr) {
+            // Eğer hesap yoksa (user-not-found), otomatik oluştur
+            if (authErr.code === 'auth/user-not-found' || authErr.code === 'auth/invalid-credential') {
+                const { createUserWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js");
+                try {
+                    await createUserWithEmailAndPassword(auth, targetEmail, cleanPassword);
+                    // DB'ye email mühürlemesi yapılıyor
+                    await update(ref(activeDB, 'users/' + dbUsername), { 
+                        email: targetEmail,
+                        authStatus: "verified" 
+                    });
+                } catch (createErr) {
+                    console.error("Otomatik Auth Hatası:", createErr);
+                }
+            }
+        }
+
+        // --- 3. ADIM: DİNAMİK ŞİFRE STANDARTI KONTROLÜ ---
+        const uPass = String(user.password).trim();
+        if (uPass === "1234" || uPass.length < 6) {
+            let why = uPass === "1234" ? "Şu anki şifreniz varsayılan <b>'1234'</b>'dür. Yeni şifre oluşturun." : `Şifreniz en az 6 hane olmalı.`;
+            forcePasswordChange(user.username, user.type, activeDB, why);
+            return;
+        }
+
+        // --- 4. ADIM: GİRİŞ BAŞARILI ---
+        sessionStorage.setItem("currentUser", JSON.stringify({username:user.username, type:user.type}));
+        msg.style.color = "#2ecc71";
+        msg.textContent = "✅ Giriş başarılı...";
+
+        if(role==="security"){
+            if(secRemember.checked) localStorage.setItem("securityUser",JSON.stringify({username: cleanUsername, password: cleanPassword}));
+            else localStorage.removeItem("securityUser");
+
+            setTimeout(() => {
+                if(user.type==="company") window.location.href="sirket.html";
+                else if(user.type==="security") window.location.href="guvenlik.html";
+                else if(user.type==="admin") window.location.href="yetkili.html";
+            }, 500);
+        }
+
+    } catch(err){ 
+        console.error(err); 
+        msg.style.color = "#e74c3c";
+        msg.textContent="Bağlantı hatası!"; 
+        loginBtn.disabled = false; loginBtn.style.opacity = "1";
+    }
+}
+
+document.getElementById("secLoginBtn").addEventListener("click", ()=> loginUser(secUsername.value, secPassword.value,"security"));
+
+async function loadSiteName(db){
+  try{
+    const snap = await get(child(ref(db),"settings/siteName"));
+    if(snap.exists()){
+      const name=snap.val().trim();
+      if(name!==""){ siteNameEl.textContent=name; siteNameEl.style.display="block"; }
+    }
+  }catch(e){ console.error("Site adı yüklenemedi", e); }
+}
+
+qrBtn.addEventListener("click", ()=>{
+  setActive(qrBtn);
+  qrModal.style.display = "flex";
+  const qrDiv = document.getElementById("qr-reader");
+  qrDiv.innerHTML = "";
+  qrReader = new Html5Qrcode("qr-reader");
+  const qrBoxSize = Math.min(window.innerWidth*0.8,300);
+  qrReader.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: qrBoxSize },
+    async (qrCodeMessage)=>{
+      try{ await qrReader.stop(); }catch(e){}
+      qrReader=null;
+      qrModal.style.display = "none";
+      await loadSiteConfig(qrCodeMessage);
+      document.getElementById("qrMessage").textContent="İşlem başarılı, şimdi giriş yapabilirsiniz.";
+    },
+    (err)=>{ console.log("QR tarama:",err);}
+  ).catch(err=>{
+    alert("Kamera açılamadı: "+err);
+    qrModal.style.display = "none";
+  });
+});
+
+codeBtn.addEventListener("click", ()=>{
+  setActive(codeBtn);
+  codeModal.classList.remove("hidden");
+  codeInput.value="";
+  codeInput.focus();
+});
+
+codeCancel.addEventListener("click", ()=> codeModal.classList.add("hidden"));
+codeConfirm.addEventListener("click", async ()=>{
+  const code = codeInput.value.trim();
+  if(!/^\d{4}$/.test(code)){ alert("Lütfen 4 haneli sayı girin!"); return; }
+  codeModal.classList.add("hidden");
+  await loadSiteConfig(code);
+  document.getElementById("qrMessage").textContent="Kod başarıyla yüklendi, giriş yapabilirsiniz!";
+});
+
+siteNameEl.addEventListener("mousedown",()=>{ pressTimer=setTimeout(openDisconnectModal,800); });
+siteNameEl.addEventListener("mouseup",()=>clearTimeout(pressTimer));
+siteNameEl.addEventListener("mouseleave",()=>clearTimeout(pressTimer));
+siteNameEl.addEventListener("touchstart",()=>{ pressTimer=setTimeout(openDisconnectModal,800); });
+siteNameEl.addEventListener("touchend",()=>clearTimeout(pressTimer));
+
+function disconnectProject(){
+  localStorage.removeItem("siteID");
+  localStorage.removeItem("siteConfig");
+  sessionStorage.removeItem("currentUser");
+  siteNameEl.textContent="";
+  siteNameEl.style.display="none";
+  showQRButtons(); 
+  document.getElementById("qrMessage").textContent="Proje bağlantısından ayrıldınız.";
+  msg.textContent="";
+}
+
+function openDisconnectModal(){ modal.classList.remove("hidden"); }
+function closeDisconnectModal(){ modal.classList.add("hidden"); }
+cancelBtn.onclick = closeDisconnectModal;
+confirmBtn.onclick = ()=>{ closeDisconnectModal(); disconnectProject(); };
+
+function setActive(button){ [qrBtn, codeBtn].forEach(b=>b.classList.remove("active")); button.classList.add("active"); }
+
+async function loadSiteConfig(inputCode){
+  try{
+    let siteID;
+    if(/^\d{4}$/.test(inputCode)){
+      const shortSnap = await get(child(ref(merkezDB), `shortCodes/${inputCode}`));
+      if(!shortSnap.exists()){
+        msg.textContent = "Kısa kod geçersiz!";
+        showQRButtons();
+        return null;
+      }
+      siteID = shortSnap.val();
+    } else {
+      siteID = inputCode;
+    }
+
+    const siteSnap = await get(child(ref(merkezDB), `sites/${siteID}/config`));
+    if(!siteSnap.exists()){
+      msg.textContent = "Site config bulunamadı!";
+      showQRButtons();
+      return null;
+    }
+
+    const siteConfig = siteSnap.val();
+    let siteApp = getApps().find(a => a.name === `siteApp-${siteID}`);
+    if(!siteApp) siteApp = initializeApp(siteConfig, `siteApp-${siteID}`);
+
+    const siteDB = getDatabase(siteApp);
+    localStorage.setItem("siteID", siteID);
+    localStorage.setItem("siteConfig", JSON.stringify(siteConfig));
+    hideQRButtons(); 
+    await loadSiteName(siteDB);
+
+    msg.textContent = "Site başarıyla yüklendi!";
+    return siteDB;
+
+  } catch(err){
+    console.error(err);
+    msg.textContent = "Site yüklenirken hata oluştu!";
+    showQRButtons();
+  }
+}
+
+closeQRModal.addEventListener("click", async () => {
+  if(qrReader){
+    try {
+      await qrReader.stop();
+      qrReader.clear();      
+    } catch(e){
+      console.error("QR durdurulamadı:", e);
+    }
+    qrReader = null;
+  }
+  qrModal.style.display = "none"; 
+});
+
 </script>
 
-<div class="corner-bottom">
-  © 2025 CGA Güvenlik Sistemleri
+<div id="disconnectModal" class="disconnect-modal hidden">
+  <div class="modal-box">
+    <p>Proje bağlantısından ayrılmak istiyor musunuz?</p>
+    <div class="modal-actions">
+      <button id="cancelDisconnect">İptal</button>
+      <button id="confirmDisconnect">Ayrıl</button>
+    </div>
+  </div>
 </div>
 
-<div class="corner-top">
-  v1.0.0 
-</div>
+<button id="installBtn" class="install-btn" style="position: fixed; top: 12px; left: 12px; font-size: 20px; display:none; z-index:500;">📲 Uygulamayı Yükle</button>
 
+<script>
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block';
+});
+
+installBtn.addEventListener('click', async () => {
+  installBtn.style.display = 'none';
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  }
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      reg.onupdatefound = () => {
+        const installingWorker = reg.installing;
+        installingWorker.onstatechange = () => {
+          if (installingWorker.state === 'installed') {
+            if (navigator.serviceWorker.controller) {
+              // Yeni bir güncelleme (tamir edilmiş butonlar vb.) varsa sayfayı otomatik tazeler
+              window.location.reload();
+            }
+          }
+        };
+      };
+    }).catch(err => console.error('SW Hatası:', err));
+  });
+}
+window.toggleSupport = function() {
+  const wrapper = document.getElementById('supportWrapper');
+  wrapper.classList.toggle('active');
+};
+
+// Dışarı tıklayınca kapansın
+document.addEventListener('click', (e) => {
+  const wrapper = document.getElementById('supportWrapper');
+  if (wrapper && !wrapper.contains(e.target) && wrapper.classList.contains('active')) {
+    wrapper.classList.remove('active');
+  }
+});
+</script>
+<div class="support-wrapper" id="supportWrapper">
+  <a href="whatsapp://send?phone=905537074882&text=Merhaba, teknik desteğe ihtiyacım var." class="support-item">
+    <span class="support-label">WhatsApp Mesaj</span>
+    <div class="support-icon btn-whatsapp-icon">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" width="26">
+    </div>
+  </a>
+  
+  <a href="tel:+905537074882" class="support-item">
+    <span class="support-label">Hemen Ara</span>
+    <div class="support-icon btn-call-icon">📞</div>
+  </a>
+
+  <button class="main-support-btn" onclick="toggleSupport()">
+    <span class="emoji">🛠️</span>
+    <span>DESTEK</span>
+  </button>
+</div>
 </body>
 </html>
